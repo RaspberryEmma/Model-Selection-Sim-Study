@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          14/04/2023
-# Most Recent Edit: 17/04/2023
+# Most Recent Edit: 24/04/2023
 # ****************************************
 
 
@@ -37,20 +37,42 @@ rm(list = ls())
 
 # ----- Read Results Data from CSV -----
 
-results.s1 <- read.csv("data/results_s1.csv")
-results.s2 <- read.csv("data/results_s2.csv")
+load("data/results_s1.rda")
+load("data/results_s2.rda")
 
 
-# ----- Look at Results -----
+# ----- Examine Results -----
 
-results.s1 %>% head %>% knitr::kable()
-results.s2 %>% head %>% knitr::kable()
+results.s1 %>% dim %>% print
+results.s2 %>% dim %>% print
+
+results.s1[1, , ] %>% knitr::kable()
+results.s2[1, , ] %>% knitr::kable()
 
 
 # ----- Interpreting Results -----
 
-results.s1 %>% colMeans() %>% knitr::kable(col.names = c("Mean Bias"))
-results.s2 %>% colMeans() %>% knitr::kable(col.names = c("Mean Bias"))
+message("Mean Bias of each VS Technique for each Parameter estimate")
+
+message(paste(c("Scenario = ", 1, ", N = ", dim(results.s1)[1] ), sep = ""))
+results.s1 %>% apply(., c(2, 3), mean) %>% knitr::kable()
+message(paste(c("Scenario = ", 2, ", N = ", dim(results.s1)[1]), sep = ""))
+results.s2 %>% apply(., c(2, 3), mean) %>% knitr::kable()
 
 
+# ----- Generate Plots
+
+# Heat Map
+png("plots/bias_s1.png")
+p <- (results.s1 %>% apply(., c(2, 3), mean)) %>% ggcorrplot::ggcorrplot() +
+  ggtitle("Bias HeatMap - Scenario 1")
+p
+dev.off()
+
+
+png("plots/bias_s2.png")
+p <- (results.s2 %>% apply(., c(2, 3), mean)) %>% ggcorrplot::ggcorrplot() +
+  ggtitle("Bias HeatMap - Scenario 2")
+p
+dev.off()
 

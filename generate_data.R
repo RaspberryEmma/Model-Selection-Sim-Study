@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          09/04/2023
-# Most Recent Edit: 17/04/2023
+# Most Recent Edit: 24/04/2023
 # ****************************************
 
 
@@ -72,6 +72,10 @@ draw.DAG.2 <- function() {
 
 # ----- Synthetic Data Generation -----
 
+get.true.param.1 <- function() {
+  return ( c(0.0, 0.02, 0.05, 1.0, 1.0, 1.0) )
+}
+
 generate.data.1 <- function(sample.size = 1000) {
   # sample size
   n <- sample.size
@@ -109,6 +113,11 @@ generate.data.1 <- function(sample.size = 1000) {
   return (synthetic.data)
 }
 
+
+
+get.true.param.2 <- function() {
+  return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
+}
 
 generate.data.2 <- function(sample.size = 1000) {
   # sample size
