@@ -1,0 +1,4 @@
+Todo:
+
+ - re-scale bias values across all scenarios (global scale!) for comparison sake
+ - 

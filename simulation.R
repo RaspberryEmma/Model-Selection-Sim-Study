@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 24/04/2023
+# Most Recent Edit: 01/05/2023
 # ****************************************
 
 
@@ -63,7 +63,7 @@ all.biases <- function(current.data = NULL, param.true = NULL) {
   
   
   # Model fitting
-  linear.model <- lm(y.train ~ as.matrix(X.train)) # TODO: fix this !
+  linear.model <- lm(y.train ~ as.matrix(X.train))
   lasso.model  <- glmnet::glmnet(X.train, y.train, alpha = 1, family.train = "gaussian", intercept = F)
   ridge.model  <- glmnet::glmnet(X.train, y.train, alpha = 0, family.train = "gaussian", intercept = F)
   scad.model   <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("SCAD"))

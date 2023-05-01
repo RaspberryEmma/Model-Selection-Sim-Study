@@ -9,25 +9,11 @@
 # Emma Tarmey
 #
 # Started:          10/04/2023
-# Most Recent Edit: 17/04/2023
+# Most Recent Edit: 01/05/2023
 # ****************************************
 
 
 echo " *** ✨ Starting ✨ ***"
-
-
-# Generate all relevant plots
-echo ""
-echo ""
-echo " *** Generating Plots ***"
-Rscript generate_data.R
-
-
-# Run variable selection on data-sets
-echo ""
-echo ""
-echo " *** Performing Simulation ***"
-Rscript simulation.R
 
 
 # Interpret results (columns sums?)
