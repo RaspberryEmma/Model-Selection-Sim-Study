@@ -9,10 +9,11 @@
 # Emma Tarmey
 #
 # Started:          10/04/2023
-# Most Recent Edit: 01/05/2023
+# Most Recent Edit: 04/05/2023
 # ****************************************
 
 
+clear
 echo " *** ✨ Starting ✨ ***"
 
 

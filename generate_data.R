@@ -90,11 +90,11 @@ generate.data.1 <- function(sample.size = 1000) {
 }
 
 
+
 draw.DAG.2 <- function() {
   # specify relationships and node positions
   causal_dag <- ggdag::dagify(y ~ x.1 + x.2 + x.3,
-                              x.1 ~ c.1,
-                              x.2 ~ c.1 + c.2,
+                              x.2 ~ c.1,
                               coords = list(x = c(y = 2.0, x.1 = 1.0, x.2 = 2.0, x.3 = 3.0, c.1 = 1.5, c.2 = 2.5),
                                             y = c(y = 1.0, x.1 = 2.0, x.2 = 2.0, x.3 = 2.0, c.1 = 3.0, c.2 = 3.0)))
   
@@ -145,10 +145,12 @@ generate.data.2 <- function(sample.size = 1000) {
 }
 
 
+
 draw.DAG.3 <- function() {
   # specify relationships and node positions
   causal_dag <- ggdag::dagify(y ~ x.1 + x.2 + x.3,
-                              x.2 ~ c.1,
+                              x.1 ~ c.1,
+                              x.2 ~ c.1 + c.2,
                               coords = list(x = c(y = 2.0, x.1 = 1.0, x.2 = 2.0, x.3 = 3.0, c.1 = 1.5, c.2 = 2.5),
                                             y = c(y = 1.0, x.1 = 2.0, x.2 = 2.0, x.3 = 2.0, c.1 = 3.0, c.2 = 3.0)))
   
