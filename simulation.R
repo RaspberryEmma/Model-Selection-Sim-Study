@@ -227,11 +227,50 @@ save( results.s3, file = "data/results_s3.rda" )
 
 
 
+# ----- Simulation Scenario 4 -----
+
+set.seed(2023)        # reproducibility
+N             <- 1000 # repetitions for this scenario
+M             <- 5    # number of VS techniques under investigation 
+p             <- 6    # number of variables in data (includes id, excludes intercept and outcome y)
+n             <- 1000 # synthetic data-set size
+current.data  <- NULL
+
+method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
+var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
+iter.labels   <- paste("i = ", c(1:N))
+results.s4    <- array(data     = NA,
+                       dim      = c(N, M, p),
+                       dimnames = list(iter.labels, method.labels, var.labels) )
+
+
+for (i in 1:N) {
+  # Generate synthetic data
+  current.data <- generate.data.4(sample.size = n)
+  param.true   <- get.true.param.4()
+  
+  # Fit models, determine biases of each model
+  current.biases <- all.biases(current.data, param.true)
+  
+  # Record results
+  results.s4[i, , ] <- current.biases
+}
+
+
+# check results
+results.s4[1, , ] %>% knitr::kable()
+
+# save data
+save( results.s4, file = "data/results_s4.rda" )
+
+
+
 # ----- Sanity Checks -----
 
 results.s1 %>% dim %>% print
 results.s2 %>% dim %>% print
 results.s3 %>% dim %>% print
+results.s4 %>% dim %>% print
 
 
 

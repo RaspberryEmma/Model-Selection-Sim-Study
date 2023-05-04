@@ -95,6 +95,7 @@ draw.DAG.2 <- function() {
   # specify relationships and node positions
   causal_dag <- ggdag::dagify(y ~ x.1 + x.2 + x.3,
                               x.2 ~ c.1,
+                              c.2 ~ c.2,
                               coords = list(x = c(y = 2.0, x.1 = 1.0, x.2 = 2.0, x.3 = 3.0, c.1 = 1.5, c.2 = 2.5),
                                             y = c(y = 1.0, x.1 = 2.0, x.2 = 2.0, x.3 = 2.0, c.1 = 3.0, c.2 = 3.0)))
   
@@ -107,7 +108,7 @@ draw.DAG.2 <- function() {
 }
 
 get.true.param.2 <- function() {
-  return ( c(0.0, 0.02, 0.05, 1.0, 1.0, 1.0) )
+  return ( c(0.0, 0.05, 0.0, 1.0, 1.0, 1.0) )
 }
 
 generate.data.2 <- function(sample.size = 1000) {
@@ -124,12 +125,12 @@ generate.data.2 <- function(sample.size = 1000) {
     c.2 = rnorm(n, mean = 50,  sd = 2.5),
     
     # generate independent variable
+    x.1 = runif(n, min = 30, max = 80),
     x.3 = runif(n, min = 40, max = 90)
     
   ) %>% 
     mutate(
       # generate dependent variables with noise
-      x.1 = (c.1 * 0.02) + runif(n, min = 0, max = 1),
       x.2 = (c.1 * 0.05) + runif(n, min = 0, max = 1),
       
       # response variable
@@ -150,7 +151,7 @@ draw.DAG.3 <- function() {
   # specify relationships and node positions
   causal_dag <- ggdag::dagify(y ~ x.1 + x.2 + x.3,
                               x.1 ~ c.1,
-                              x.2 ~ c.1 + c.2,
+                              x.2 ~ c.1,
                               coords = list(x = c(y = 2.0, x.1 = 1.0, x.2 = 2.0, x.3 = 3.0, c.1 = 1.5, c.2 = 2.5),
                                             y = c(y = 1.0, x.1 = 2.0, x.2 = 2.0, x.3 = 2.0, c.1 = 3.0, c.2 = 3.0)))
   
@@ -163,7 +164,7 @@ draw.DAG.3 <- function() {
 }
 
 get.true.param.3 <- function() {
-  return ( c(0.0, 0.02, 0.05, 1.0, 1.0, 1.0) )
+  return ( c(0.0, 0.20, 0.0, 1.0, 1.0, 1.0) )
 }
 
 generate.data.3 <- function(sample.size = 1000) {
@@ -180,13 +181,69 @@ generate.data.3 <- function(sample.size = 1000) {
     c.2 = rnorm(n, mean = 50,  sd = 2.5),
     
     # generate independent variable
-    x.1 = runif(n, min = 20, max = 100),
     x.3 = runif(n, min = 40, max = 90)
     
   ) %>% 
     mutate(
       # generate dependent variables with noise
+      x.1 = (c.1 * 0.15) + runif(n, min = 0, max = 1),
       x.2 = (c.1 * 0.05) + runif(n, min = 0, max = 1),
+      
+      # response variable
+      y = x.1 + x.2 + x.3 + runif(n, min = 0, max = 1),
+      y = rescale(y, to = c(min(y), 100))
+    )
+  
+  # re-order columns
+  synthetic.data %>% setcolorder( c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y") )
+  
+  # return result
+  return (synthetic.data)
+}
+
+
+
+draw.DAG.4 <- function() {
+  # specify relationships and node positions
+  causal_dag <- ggdag::dagify(y ~ x.1 + x.2 + x.3,
+                              x.1 ~ c.1,
+                              x.2 ~ c.1 + c.2,
+                              coords = list(x = c(y = 2.0, x.1 = 1.0, x.2 = 2.0, x.3 = 3.0, c.1 = 1.5, c.2 = 2.5),
+                                            y = c(y = 1.0, x.1 = 2.0, x.2 = 2.0, x.3 = 2.0, c.1 = 3.0, c.2 = 3.0)))
+  
+  # plot DAG
+  p <- ggdag(causal_dag) +
+    theme_dag() +
+    ggtitle("Synthetic Data Causal DAG - Scenario 4")
+  
+  return (p)
+}
+
+get.true.param.4 <- function() {
+  return ( c(0.0, 0.15, 0.11, 1.0, 1.0, 1.0) )
+}
+
+generate.data.4 <- function(sample.size = 1000) {
+  # sample size
+  n <- sample.size
+  
+  # generate the data itself
+  synthetic.data <- tibble(
+    # unique identifier by row
+    id = 1:n,
+    
+    # generate independent confounder variables
+    c.1 = rnorm(n, mean = 100, sd = 75),
+    c.2 = rnorm(n, mean = 50,  sd = 2.5),
+    
+    # generate independent variable
+    x.3 = runif(n, min = 40, max = 90)
+    
+  ) %>% 
+    mutate(
+      # generate dependent variables with noise
+      x.1 = (c.1 * 0.10) + runif(n, min = 0, max = 1),
+      x.2 = (c.1 * 0.05) + (c.2 * 0.11) + runif(n, min = 0, max = 1),
       
       # response variable
       y = x.1 + x.2 + x.3 + runif(n, min = 0, max = 1),
@@ -285,7 +342,7 @@ dev.off()
 
 
 
-# ----- Test Scenario 1 -----
+# ----- Test Scenario 3 -----
 
 # DAG plot
 png("plots/synthetic_data_s3_DAG.png")
@@ -322,6 +379,48 @@ dev.off()
 png("plots/synthetic_data_s3_t3_corr.png")
 p <- data.3.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
   ggtitle("Synthetic Data Correlation Plot - Scenario 3 - Trial 3")
+p
+dev.off()
+
+
+
+# ----- Test Scenario 4 -----
+
+# DAG plot
+png("plots/synthetic_data_s4_DAG.png")
+p <- draw.DAG.4()
+p
+dev.off()
+
+# data - scenario - trial
+data.4.1 <- generate.data.4()
+data.4.2 <- generate.data.4()
+data.4.3 <- generate.data.4()
+
+data.4.1 %>% head() %>% knitr::kable()
+data.4.2 %>% head() %>% knitr::kable()
+data.4.3 %>% head() %>% knitr::kable()
+
+data.4.1 %>% cor()
+data.4.2 %>% cor()
+data.4.3 %>% cor()
+
+# Correlation plot
+png("plots/synthetic_data_s4_t1_corr.png")
+p <- data.4.1 %>% cor() %>% ggcorrplot::ggcorrplot() +
+  ggtitle("Synthetic Data Correlation Plot - Scenario 4 - Trial 1")
+p
+dev.off()
+
+png("plots/synthetic_data_s4_t2_corr.png")
+p <- data.4.2 %>% cor() %>% ggcorrplot::ggcorrplot() +
+  ggtitle("Synthetic Data Correlation Plot - Scenario 4 - Trial 2")
+p
+dev.off()
+
+png("plots/synthetic_data_s4_t3_corr.png")
+p <- data.4.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
+  ggtitle("Synthetic Data Correlation Plot - Scenario 4 - Trial 3")
 p
 dev.off()
 
