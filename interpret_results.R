@@ -6,12 +6,13 @@
 # Emma Tarmey
 #
 # Started:          14/04/2023
-# Most Recent Edit: 01/05/2023
+# Most Recent Edit: 04/05/2023
 # ****************************************
 
 
 # ----- Preamble -----
 
+rm(list = ls())
 
 suppressPackageStartupMessages({
   library(broom)
@@ -32,7 +33,7 @@ suppressPackageStartupMessages({
   library(VARSELECTEXPOSURE)
 })
 
-rm(list = ls())
+source("plot_rescale.R")
 
 
 # ----- Read Results Data from CSV -----
@@ -52,13 +53,10 @@ results.s1[1, , ] %>% knitr::kable()
 results.s2[1, , ] %>% knitr::kable()
 
 # take expectation across trials
-s1.means <- results.s1 %>% apply(., c(2, 3), mean) %>% melt()
+s1.means <- results.s1 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
 colnames(s1.means) <- c("Technique", "Variable", "Bias")
-s2.means <- results.s2 %>% apply(., c(2, 3), mean) %>% melt()
+s2.means <- results.s2 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
 colnames(s2.means) <- c("Technique", "Variable", "Bias")
-
-# re-scale across all scenarios 
-# TODO: this!
 
 message("\n\nMean Bias of each VS Technique for each Parameter estimate")
 
@@ -70,27 +68,33 @@ s2.means %>% knitr::kable()
 
 
 
-# ----- Generate Plots
+# ----- Generate Plots -----
 
-# Heat Map
+t1 <- paste0( "Bias HeatMap: \nScenario = ", 1, ", N = ", dim(results.s1)[1] )
+p1 <-  ggplot(s1.means , aes(Technique, Variable, fill= Bias)) + 
+       geom_tile() +
+       ggtitle(t1)
+
+t2 <- paste0( "Bias HeatMap: \nScenario = ", 2, ", N = ", dim(results.s2)[1] )
+p2 <-  ggplot(s2.means , aes(Technique, Variable, fill= Bias)) + 
+       geom_tile() +
+       ggtitle(t2)
+
+# set scale globally across all heat-maps
+# makes comparisons interpretable
+message("")
+set_scale_union(p1, p2,
+                scale = scale_fill_gradientn( colours = c("blue", "white", "red"),
+                                                      values  = rescale(c(-1,0,1))) )
+
+
+
+# ----- Save Plots to Disk -----
+
 png("plots/bias_s1.png")
-t <- paste0( "Bias HeatMap: \nScenario = ", 1, ", N = ", dim(results.s1)[1] )
-p <-  ggplot(s1.means , aes(Technique, Variable, fill= Bias)) + 
-      geom_tile() +
-      scale_fill_gradientn( colours = c("blue", "white", "red"),
-                            values  = rescale(c(-1,0,1))) +
-      ggtitle(t)
-p
+p1
 dev.off()
-
 
 png("plots/bias_s2.png")
-t <- paste0( "Bias HeatMap: \nScenario = ", 2, ", N = ", dim(results.s2)[1] )
-p <-  ggplot(s2.means , aes(Technique, Variable, fill= Bias)) + 
-      geom_tile() +
-      scale_fill_gradientn( colours = c("blue", "white", "red"),
-                            values  = rescale(c(-1,0,1))) +
-      ggtitle(t)
-p
+p2
 dev.off()
-
