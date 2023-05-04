@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 01/05/2023
+# Most Recent Edit: 04/05/2023
 # ****************************************
 
 
@@ -189,10 +189,49 @@ save( results.s2, file = "data/results_s2.rda" )
 
 
 
+# ----- Simulation Scenario 3 -----
+
+set.seed(2023)        # reproducibility
+N             <- 1000 # repetitions for this scenario
+M             <- 5    # number of VS techniques under investigation 
+p             <- 6    # number of variables in data (includes id, excludes intercept and outcome y)
+n             <- 1000 # synthetic data-set size
+current.data  <- NULL
+
+method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
+var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
+iter.labels   <- paste("i = ", c(1:N))
+results.s3    <- array(data     = NA,
+                       dim      = c(N, M, p),
+                       dimnames = list(iter.labels, method.labels, var.labels) )
+
+
+for (i in 1:N) {
+  # Generate synthetic data
+  current.data <- generate.data.3(sample.size = n)
+  param.true   <- get.true.param.3()
+  
+  # Fit models, determine biases of each model
+  current.biases <- all.biases(current.data, param.true)
+  
+  # Record results
+  results.s3[i, , ] <- current.biases
+}
+
+
+# check results
+results.s3[1, , ] %>% knitr::kable()
+
+# save data
+save( results.s3, file = "data/results_s3.rda" )
+
+
+
 # ----- Sanity Checks -----
 
 results.s1 %>% dim %>% print
 results.s2 %>% dim %>% print
+results.s3 %>% dim %>% print
 
 
 

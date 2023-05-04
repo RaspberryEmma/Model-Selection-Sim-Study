@@ -40,6 +40,7 @@ source("plot_rescale.R")
 
 load("data/results_s1.rda")
 load("data/results_s2.rda")
+load("data/results_s3.rda")
 
 
 # ----- Examine Results -----
@@ -47,16 +48,20 @@ load("data/results_s2.rda")
 # load R objects
 results.s1 %>% dim %>% print
 results.s2 %>% dim %>% print
+results.s3 %>% dim %>% print
 
 # examine raw numbers
 results.s1[1, , ] %>% knitr::kable()
 results.s2[1, , ] %>% knitr::kable()
+results.s3[1, , ] %>% knitr::kable()
 
 # take expectation across trials
 s1.means <- results.s1 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
 colnames(s1.means) <- c("Technique", "Variable", "Bias")
 s2.means <- results.s2 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
 colnames(s2.means) <- c("Technique", "Variable", "Bias")
+s3.means <- results.s3 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
+colnames(s3.means) <- c("Technique", "Variable", "Bias")
 
 message("\n\nMean Bias of each VS Technique for each Parameter estimate")
 
@@ -64,6 +69,9 @@ message(paste(c("\n\nScenario = ", 1, ", N = ", dim(results.s1)[1] ), sep = ""))
 s1.means %>% knitr::kable()
 
 message(paste(c("\n\nScenario = ", 2, ", N = ", dim(results.s2)[1]), sep = ""))
+s2.means %>% knitr::kable()
+
+message(paste(c("\n\nScenario = ", 3, ", N = ", dim(results.s3)[1]), sep = ""))
 s2.means %>% knitr::kable()
 
 
@@ -80,10 +88,15 @@ p2 <-  ggplot(s2.means , aes(Technique, Variable, fill= Bias)) +
        geom_tile() +
        ggtitle(t2)
 
+t3 <- paste0( "Bias HeatMap: \nScenario = ", 3, ", N = ", dim(results.s3)[1] )
+p3 <-  ggplot(s3.means , aes(Technique, Variable, fill= Bias)) + 
+  geom_tile() +
+  ggtitle(t3)
+
 # set scale globally across all heat-maps
 # makes comparisons interpretable
 message("")
-set_scale_union(p1, p2,
+set_scale_union(p1, p2, p3,
                 scale = scale_fill_gradientn( colours = c("blue", "white", "red"),
                                                       values  = rescale(c(-1,0,1))) )
 
@@ -97,4 +110,8 @@ dev.off()
 
 png("plots/bias_s2.png")
 p2
+dev.off()
+
+png("plots/bias_s3.png")
+p3
 dev.off()
