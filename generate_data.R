@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          09/04/2023
-# Most Recent Edit: 04/05/2023
+# Most Recent Edit: 26/05/2023
 # ****************************************
 
 
@@ -54,6 +54,7 @@ draw.DAG.1 <- function() {
 }
 
 get.true.param.1 <- function() {
+  # id, c1, c2, x1, x2, x3
   return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
@@ -67,19 +68,18 @@ generate.data.1 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 100, sd = 75),
+    c.1 = rnorm(n, mean = 10, sd = 2.5),
     c.2 = rnorm(n, mean = 5,  sd = 2.5),
     
     # generate independent variables
-    x.1 = rweibull(n, shape = 1, scale = 1),
-    x.2 = rgeom(n, prob = 0.3),
-    x.3 = runif(n, min = 40, max = 90)
+    x.1 = rnorm(n, mean = 5,  sd = 7.5),
+    x.2 = rnorm(n, mean = 20, sd = 2.5),
+    x.3 = rnorm(n, mean = 15, sd = 3.5)
     
   ) %>% 
     mutate(
       # response variable
-      y = x.1 + x.2 + x.3 + rnorm(n, mean = 0, sd = 3),
-      y = rescale(y, to = c(min(y), 100))
+      y = x.1 + x.2 + x.3 + rnorm(n, mean = 0, sd = 3)
     )
   
   # re-order columns
@@ -108,7 +108,8 @@ draw.DAG.2 <- function() {
 }
 
 get.true.param.2 <- function() {
-  return ( c(0.0, 0.05, 0.0, 1.0, 1.0, 1.0) )
+  # id, c1, c2, x1, x2, x3
+  return ( c(0.0, 0.5, 0.0, 1.0, 1.0, 1.0) )
 }
 
 generate.data.2 <- function(sample.size = 1000) {
@@ -121,21 +122,20 @@ generate.data.2 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 100, sd = 75),
-    c.2 = rnorm(n, mean = 50,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = 2.5),
+    c.2 = rnorm(n, mean = 5,  sd = 2.5),
     
     # generate independent variable
-    x.1 = runif(n, min = 30, max = 80),
-    x.3 = runif(n, min = 40, max = 90)
+    x.1 = rnorm(n, mean = 5,  sd = 7.5),
+    x.3 = rnorm(n, mean = 15, sd = 3.5)
     
   ) %>% 
     mutate(
       # generate dependent variables with noise
-      x.2 = (c.1 * 0.05) + runif(n, min = 0, max = 1),
+      x.2 = (c.1 * 0.5) + rnorm(n, mean = 0, sd = 1),
       
       # response variable
-      y = x.1 + x.2 + x.3 + runif(n, min = 0, max = 1),
-      y = rescale(y, to = c(min(y), 100))
+      y = x.1 + x.2 + x.3 + rnorm(n, mean = 0, sd = 3)
     )
   
   # re-order columns
@@ -152,6 +152,7 @@ draw.DAG.3 <- function() {
   causal_dag <- ggdag::dagify(y ~ x.1 + x.2 + x.3,
                               x.1 ~ c.1,
                               x.2 ~ c.1,
+                              c.2 ~ c.2,
                               coords = list(x = c(y = 2.0, x.1 = 1.0, x.2 = 2.0, x.3 = 3.0, c.1 = 1.5, c.2 = 2.5),
                                             y = c(y = 1.0, x.1 = 2.0, x.2 = 2.0, x.3 = 2.0, c.1 = 3.0, c.2 = 3.0)))
   
@@ -164,6 +165,7 @@ draw.DAG.3 <- function() {
 }
 
 get.true.param.3 <- function() {
+  # id, c1, c2, x1, x2, x3
   return ( c(0.0, 0.20, 0.0, 1.0, 1.0, 1.0) )
 }
 
@@ -177,21 +179,20 @@ generate.data.3 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 100, sd = 75),
-    c.2 = rnorm(n, mean = 50,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = 2.5),
+    c.2 = rnorm(n, mean = 5,  sd = 2.5),
     
     # generate independent variable
-    x.3 = runif(n, min = 40, max = 90)
+    x.3 = rnorm(n, mean = 15, sd = 3.5)
     
   ) %>% 
     mutate(
       # generate dependent variables with noise
-      x.1 = (c.1 * 0.15) + runif(n, min = 0, max = 1),
-      x.2 = (c.1 * 0.05) + runif(n, min = 0, max = 1),
+      x.1 = (c.1 * 0.15) + rnorm(n, mean = 0, sd = 1),
+      x.2 = (c.1 * 0.05) + rnorm(n, mean = 0, sd = 1),
       
       # response variable
-      y = x.1 + x.2 + x.3 + runif(n, min = 0, max = 1),
-      y = rescale(y, to = c(min(y), 100))
+      y = x.1 + x.2 + x.3 + rnorm(n, mean = 0, sd = 1)
     )
   
   # re-order columns
@@ -220,6 +221,7 @@ draw.DAG.4 <- function() {
 }
 
 get.true.param.4 <- function() {
+  # id, c1, c2, x1, x2, x3
   return ( c(0.0, 0.15, 0.11, 1.0, 1.0, 1.0) )
 }
 
@@ -233,21 +235,20 @@ generate.data.4 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 100, sd = 75),
-    c.2 = rnorm(n, mean = 50,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = 2.5),
+    c.2 = rnorm(n, mean = 5,  sd = 2.5),
     
     # generate independent variable
-    x.3 = runif(n, min = 40, max = 90)
+    x.3 = rnorm(n, mean = 15, sd = 3.5)
     
   ) %>% 
     mutate(
       # generate dependent variables with noise
       x.1 = (c.1 * 0.10) + runif(n, min = 0, max = 1),
-      x.2 = (c.1 * 0.05) + (c.2 * 0.11) + runif(n, min = 0, max = 1),
+      x.2 = (c.1 * 0.05) + (c.2 * 0.11) + rnorm(n, mean = 0, sd = 1),
       
       # response variable
-      y = x.1 + x.2 + x.3 + runif(n, min = 0, max = 1),
-      y = rescale(y, to = c(min(y), 100))
+      y = x.1 + x.2 + x.3 + rnorm(n, mean = 0, sd = 1)
     )
   
   # re-order columns

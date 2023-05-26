@@ -1,6 +1,5 @@
 Todo:
 
- - more scenarios
  - more techniques
  - check lambda interpretation
  - writing !

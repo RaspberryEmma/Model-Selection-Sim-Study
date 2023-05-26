@@ -9,12 +9,12 @@
 # Emma Tarmey
 #
 # Started:          10/04/2023
-# Most Recent Edit: 04/05/2023
+# Most Recent Edit: 26/05/2023
 # ****************************************
 
 
 clear
-echo " *** ✨ Starting ✨ ***"
+echo " *** Starting ***"
 
 
 # Generate all relevant plots
@@ -39,7 +39,7 @@ Rscript interpret_results.R
 
 
 echo ""
-echo " *** ✨ Complete ✨ ***"
+echo " *** Complete ***"
 
 
 
