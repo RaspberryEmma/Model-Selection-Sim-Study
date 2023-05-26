@@ -112,165 +112,76 @@ all.biases <- function(current.data = NULL, param.true = NULL) {
 }
 
 
+# ----- Simulating Scenarios -----
 
-# ----- Simulation Scenario 1 -----
-
-set.seed(2023)        # reproducibility
-N             <- 1000 # repetitions for this scenario
-M             <- 5    # number of VS techniques under investigation 
-p             <- 6    # number of variables in data (includes id, excludes intercept and outcome y)
-n             <- 1000 # synthetic data-set size
-current.data  <- NULL
-
-method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
-iter.labels   <- paste("i = ", c(1:N))
-results.s1    <- array(data     = NA,
-                       dim      = c(N, M, p),
-                       dimnames = list(iter.labels, method.labels, var.labels) )
-
-
-for (i in 1:N) {
-  # Generate synthetic data
-  current.data <- generate.data.1(sample.size = n)
-  param.true   <- get.true.param.1()
+# generic function to simulate a given scenario s
+sim.scenario <- function(s = NULL, conf.sd = NULL) {
+  N             <- 1000        # repetitions for this scenario
+  M             <- 5           # number of VS techniques under investigation 
+  p             <- 6           # number of variables in data (includes id, excludes intercept and outcome y)
+  n             <- 1000        # synthetic data-set size
+  current.data  <- NULL
   
-  # Fit models, determine biases of each model
-  current.biases <- all.biases(current.data, param.true)
+  method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
+  var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
+  iter.labels   <- paste("i = ", c(1:N))
+  results       <- array(data     = NA,
+                         dim      = c(N, M, p),
+                         dimnames = list(iter.labels, method.labels, var.labels) )
   
-  # Record results
-  results.s1[i, , ] <- current.biases
+  for (i in 1:N) {
+    # Generate synthetic data
+    current.data <- do.call( paste("generate.data.", s, sep = ""),
+                             list( sample.size = n, conf.sd = conf.sd ) )
+    param.true   <- do.call( paste("get.true.param.", s, sep = ""), list() )
+    
+    
+    # Fit models, determine biases of each model
+    current.biases <- all.biases(current.data, param.true)
+    
+    # Record results
+    results[i, , ] <- current.biases
+  }
+  
+  # check results
+  results[1, , ] %>% knitr::kable()
+  
+  return (results)
 }
 
 
-# check results
-results.s1[1, , ] %>% knitr::kable()
-
-# save data
-save( results.s1, file = "data/results_s1.rda" )
-
-
-
-# ----- Simulation Scenario 2 -----
-
-set.seed(2023)        # reproducibility
-N             <- 1000 # repetitions for this scenario
-M             <- 5    # number of VS techniques under investigation 
-p             <- 6    # number of variables in data (includes id, excludes intercept and outcome y)
-n             <- 1000 # synthetic data-set size
-current.data  <- NULL
-
-method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
-iter.labels   <- paste("i = ", c(1:N))
-results.s2    <- array(data     = NA,
-                       dim      = c(N, M, p),
-                       dimnames = list(iter.labels, method.labels, var.labels) )
+set.seed(2023) # reproducibility
+results      <- NULL
+conf.sd.gaps <- c(0, 1, 2)
+c1.sd        <- 2.5
+c2.sd        <- 2.5
 
 
-for (i in 1:N) {
-  # Generate synthetic data
-  current.data <- generate.data.2(sample.size = n)
-  param.true   <- get.true.param.2()
+# fixed conf sd gap
+for (s in 1:4) {
+  results <- sim.scenario(s = s, conf.sd = c(c1.sd, c2.sd))
   
-  # Fit models, determine biases of each model
-  current.biases <- all.biases(current.data, param.true)
+  assign(paste("results.s", s, sep = ""), results)
   
-  # Record results
-  results.s2[i, , ] <- current.biases
+  save( list = paste("results.s", s, sep = ""),
+        file = paste("data/results_s", s , ".rda", sep = "") )
 }
 
 
-# check results
-results.s2[1, , ] %>% knitr::kable()
-
-# save data
-save( results.s2, file = "data/results_s2.rda" )
-
-
-
-# ----- Simulation Scenario 3 -----
-
-set.seed(2023)        # reproducibility
-N             <- 1000 # repetitions for this scenario
-M             <- 5    # number of VS techniques under investigation 
-p             <- 6    # number of variables in data (includes id, excludes intercept and outcome y)
-n             <- 1000 # synthetic data-set size
-current.data  <- NULL
-
-method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
-iter.labels   <- paste("i = ", c(1:N))
-results.s3    <- array(data     = NA,
-                       dim      = c(N, M, p),
-                       dimnames = list(iter.labels, method.labels, var.labels) )
-
-
-for (i in 1:N) {
-  # Generate synthetic data
-  current.data <- generate.data.3(sample.size = n)
-  param.true   <- get.true.param.3()
-  
-  # Fit models, determine biases of each model
-  current.biases <- all.biases(current.data, param.true)
-  
-  # Record results
-  results.s3[i, , ] <- current.biases
-}
-
-
-# check results
-results.s3[1, , ] %>% knitr::kable()
-
-# save data
-save( results.s3, file = "data/results_s3.rda" )
+# conf sd gap variable
+#for (gap in conf.sd.gaps) {
+#  for (s in 1:4) {
+#    results <- sim.scenario(s = s, conf.sd = c(c1.sd - gap, c2.sd + gap))
+#    
+#    assign(paste("results.s", s, "_conf_gap_", gap, sep = ""), results)
+#    
+#    save( list = paste("results.s", s, "_conf_gap_", gap, sep = ""),
+#          file = paste("data/results_s", s ,"_conf_gap_", gap, ".rda", sep = "") )
+#  }
+#}
 
 
 
-# ----- Simulation Scenario 4 -----
-
-set.seed(2023)        # reproducibility
-N             <- 1000 # repetitions for this scenario
-M             <- 5    # number of VS techniques under investigation 
-p             <- 6    # number of variables in data (includes id, excludes intercept and outcome y)
-n             <- 1000 # synthetic data-set size
-current.data  <- NULL
-
-method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
-iter.labels   <- paste("i = ", c(1:N))
-results.s4    <- array(data     = NA,
-                       dim      = c(N, M, p),
-                       dimnames = list(iter.labels, method.labels, var.labels) )
-
-
-for (i in 1:N) {
-  # Generate synthetic data
-  current.data <- generate.data.4(sample.size = n)
-  param.true   <- get.true.param.4()
-  
-  # Fit models, determine biases of each model
-  current.biases <- all.biases(current.data, param.true)
-  
-  # Record results
-  results.s4[i, , ] <- current.biases
-}
-
-
-# check results
-results.s4[1, , ] %>% knitr::kable()
-
-# save data
-save( results.s4, file = "data/results_s4.rda" )
-
-
-
-# ----- Sanity Checks -----
-
-results.s1 %>% dim %>% print
-results.s2 %>% dim %>% print
-results.s3 %>% dim %>% print
-results.s4 %>% dim %>% print
 
 
 

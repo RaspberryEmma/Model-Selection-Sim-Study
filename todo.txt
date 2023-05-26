@@ -1,6 +1,6 @@
 Todo:
 
- - more techniques
- - check lambda interpretation
- - writing !
-  
+ - finish conf gap code in simulation.R
+ - implement conf gap interpretation in interpret_results.R
+ 
+ 

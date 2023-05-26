@@ -58,7 +58,7 @@ get.true.param.1 <- function() {
   return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.1 <- function(sample.size = 1000) {
+generate.data.1 <- function(sample.size = 1000, conf.sd     = c(2.5, 2.5)) {
   # sample size
   n <- sample.size
   
@@ -68,8 +68,8 @@ generate.data.1 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 10, sd = 2.5),
-    c.2 = rnorm(n, mean = 5,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = conf.sd[1]),
+    c.2 = rnorm(n, mean = 5,  sd = conf.sd[2]),
     
     # generate independent variables
     x.1 = rnorm(n, mean = 5,  sd = 7.5),
@@ -112,7 +112,7 @@ get.true.param.2 <- function() {
   return ( c(0.0, 0.5, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.2 <- function(sample.size = 1000) {
+generate.data.2 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
   # sample size
   n <- sample.size
   
@@ -122,8 +122,8 @@ generate.data.2 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 10, sd = 2.5),
-    c.2 = rnorm(n, mean = 5,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = conf.sd[1]),
+    c.2 = rnorm(n, mean = 5,  sd = conf.sd[2]),
     
     # generate independent variable
     x.1 = rnorm(n, mean = 5,  sd = 7.5),
@@ -169,7 +169,7 @@ get.true.param.3 <- function() {
   return ( c(0.0, 0.20, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.3 <- function(sample.size = 1000) {
+generate.data.3 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
   # sample size
   n <- sample.size
   
@@ -179,8 +179,8 @@ generate.data.3 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 10, sd = 2.5),
-    c.2 = rnorm(n, mean = 5,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = conf.sd[1]),
+    c.2 = rnorm(n, mean = 5,  sd = conf.sd[2]),
     
     # generate independent variable
     x.3 = rnorm(n, mean = 15, sd = 3.5)
@@ -225,7 +225,7 @@ get.true.param.4 <- function() {
   return ( c(0.0, 0.15, 0.11, 1.0, 1.0, 1.0) )
 }
 
-generate.data.4 <- function(sample.size = 1000) {
+generate.data.4 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
   # sample size
   n <- sample.size
   
@@ -235,8 +235,8 @@ generate.data.4 <- function(sample.size = 1000) {
     id = 1:n,
     
     # generate independent confounder variables
-    c.1 = rnorm(n, mean = 10, sd = 2.5),
-    c.2 = rnorm(n, mean = 5,  sd = 2.5),
+    c.1 = rnorm(n, mean = 10, sd = conf.sd[1]),
+    c.2 = rnorm(n, mean = 5,  sd = conf.sd[2]),
     
     # generate independent variable
     x.3 = rnorm(n, mean = 15, sd = 3.5)
