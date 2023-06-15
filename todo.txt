@@ -1,5 +1,7 @@
 Todo:
 
+ - record estimates and errors seperately
+ - switch LR summary from using errors to using raw estimates
  - finish conf gap code in simulation.R
  - implement conf gap interpretation in interpret_results.R
  
