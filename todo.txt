@@ -1,6 +1,5 @@
 Todo:
 
- - fix column labels for param estimates in interpret_results.R
  - finish conf gap code in simulation.R
  - implement conf gap interpretation in interpret_results.R
  
