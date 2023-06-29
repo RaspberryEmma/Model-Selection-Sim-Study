@@ -74,16 +74,14 @@ all.biases <- function(current.params = NULL, param.true = NULL) {
 all.params <- function(current.data = NULL) {
     
     # Partition test and training sets with index vector
-    sample      <- sample(c(TRUE, FALSE), nrow(current.data), replace = TRUE, prob = c(0.7, 0.3))
-    train.data  <- current.data[sample, ]
-    test.data   <- current.data[!sample, ]
+    #sample      <- sample(c(TRUE, FALSE), nrow(current.data), replace = TRUE, prob = c(0.7, 0.3))
+    #train.data  <- current.data
+    #test.data   <- current.data[!sample, ]
     
     
     # Separate input matrix (X) from output (y) with column selection
-    X.train <- train.data %>% subset( select = -c(y) )
-    y.train <- train.data$y
-    X.test  <- test.data %>% subset( select = -c(y) )
-    y.test  <- test.data$y
+    X.train <- current.data %>% subset( select = -c(y) )
+    y.train <- current.data$y
     
     
     # Model fitting
@@ -118,10 +116,10 @@ all.params <- function(current.data = NULL) {
 
 # generic function to simulate a given scenario s
 sim.scenario <- function(s = NULL, conf.sd = NULL) {
-    N             <- 1000        # repetitions for this scenario
-    M             <- 5           # number of VS techniques under investigation 
-    p             <- 6           # number of variables in data (includes id, excludes intercept and outcome y)
-    n             <- 1000        # synthetic data-set size
+    N             <- 1000   # repetitions for this scenario
+    M             <- 5      # number of VS techniques under investigation 
+    p             <- 6      # number of variables in data (includes id, excludes intercept and outcome y)
+    n             <- 10000  # synthetic data-set size (100,00)
     current.data  <- NULL
     
     method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
@@ -140,6 +138,8 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
                           dimnames = list(iter.labels, method.labels, var.labels) )
     
     for (i in 1:N) {
+        message(paste("Iteration ", i, "/", N))
+      
         # Generate synthetic data
         current.data <- do.call( paste("generate.data.", s, sep = ""),
                                  list( sample.size = n, conf.sd = conf.sd ) )
@@ -177,6 +177,7 @@ c2.sd             <- 2.5
 
 # fixed conf sd gap
 for (s in 1:4) {
+    message(paste("Scenario ", s, "/", 4))
     sim <- sim.scenario(s = s, conf.sd = c(c1.sd, c2.sd))
     bias.results <- sim[[1]]
     coef.results <- sim[[2]]

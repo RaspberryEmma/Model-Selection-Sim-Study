@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          09/04/2023
-# Most Recent Edit: 26/05/2023
+# Most Recent Edit: 29/06/2023
 # ****************************************
 
 
@@ -109,7 +109,8 @@ draw.DAG.2 <- function() {
 
 get.true.param.2 <- function() {
   # id, c1, c2, x1, x2, x3
-  return ( c(0.0, 0.5, 0.0, 1.0, 1.0, 1.0) )
+  # c.1 = 0 here as x.1 blocks in causal pathway
+  return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
 generate.data.2 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
@@ -166,7 +167,9 @@ draw.DAG.3 <- function() {
 
 get.true.param.3 <- function() {
   # id, c1, c2, x1, x2, x3
-  return ( c(0.0, 0.20, 0.0, 1.0, 1.0, 1.0) )
+  # c.1 = 0 here as x.1 blocks in causal pathway
+  # c.2 = 0 here as x.2 blocks in causal pathway
+  return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
 generate.data.3 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
@@ -222,7 +225,9 @@ draw.DAG.4 <- function() {
 
 get.true.param.4 <- function() {
   # id, c1, c2, x1, x2, x3
-  return ( c(0.0, 0.15, 0.11, 1.0, 1.0, 1.0) )
+  # c.1 = 0 here as x.1 blocks in causal pathway
+  # c.2 = 0 here as x.2 blocks in causal pathway
+  return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
 generate.data.4 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
