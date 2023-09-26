@@ -1,5 +1,9 @@
+Immediate:
+ - Finish re-checking glmnet param extraction
+ - Polish ncvreg param extraction
 
-More Immediate:
+
+Long Term:
  - Bias SEs from absolute bias
  - Value of bias within 1.96 SEs of zero
  - Significance test

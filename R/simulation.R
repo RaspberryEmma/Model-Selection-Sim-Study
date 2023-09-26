@@ -2,11 +2,13 @@
 # Variable Selection Simulation Study
 # 
 # Perform Variable Selection and Build Models
+# NOTE: Only 1 iteration!  Only 1 scenario!
+# TODO: fix glmnet object coef value extraction
 # 
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 19/06/2023
+# Most Recent Edit: 26/09/2023
 # ****************************************
 
 
@@ -35,7 +37,10 @@ suppressPackageStartupMessages({
   library(VARSELECTEXPOSURE)
 })
 
-setwd("R")
+if ( !is.element( "RStudio", commandArgs() ) ) {
+  setwd("R") # only needed for bash version, not running in RStudio
+}
+
 source("generate_data.R")
 
 
@@ -71,7 +76,39 @@ all.biases <- function(current.params = NULL, param.true = NULL) {
                  dim  = c(5, length(param.true)) ) )
 }
 
-all.params <- function(current.data = NULL) {
+reorder.labels <- function(params = NULL, labels = NULL) {
+  reordered.params <- rep(0, length(labels))
+  match.index      <- 0
+  
+  for (label in labels) {
+    print(label)
+    print(names(params))
+    print(str_detect(names(params), label))
+    writeLines("\n")
+    
+    # find label in params vector names
+    match.index <- match(TRUE, str_detect(names(params), label))
+    
+    # assign param in appropriate position
+    reordered.params[match.index] <- params[match.index]
+  }
+  
+  print(reordered.params)
+  writeLines("\n")
+  
+  return (reordered.params)
+}
+
+reorder.labels.ncvreg <- function(model.object = NULL, labels = NULL) {
+  reordered.params <- rep(0, length(labels))
+  match.index      <- 0
+  
+  print(summary(model.object, lambda=0.08))
+  
+  return (NULL)
+}
+
+all.params <- function(current.data = NULL, var.labels = NULL) {
     
     # Partition test and training sets with index vector
     #sample      <- sample(c(TRUE, FALSE), nrow(current.data), replace = TRUE, prob = c(0.7, 0.3))
@@ -93,16 +130,32 @@ all.params <- function(current.data = NULL) {
     
     
     # Extract fitted model parameters
+    
     ## lm object type
+    writeLines("\n *** LINEAR *** \n")
     linear.param <- linear.model$coefficients[2:7]
+    linear.param <- reorder.labels(linear.param, var.labels)
     
     ## glmnet object type
+    writeLines("\n *** LASSO *** \n")
+    print((lasso.model$beta) %>% rowMeans())
+    print(coef(lasso.model))
+    stop()
     lasso.param  <- (lasso.model$beta) %>% rowMeans()
+    lasso.param  <- reorder.labels(lasso.param, var.labels)
+    
+    ## glmnet object type
+    writeLines("\n *** RIDGE *** \n")
     ridge.param  <- (ridge.model$beta) %>% rowMeans()
+    ridge.param  <- reorder.labels(ridge.param, var.labels)
     
     ## ncvreg object type
-    scad.param   <- scad.model$beta[2:7]
-    mcp.param    <- mcp.model$beta[2:7]
+    writeLines("\n *** SCAD *** \n")
+    scad.param   <- reorder.labels.ncvreg(scad.model, var.labels)
+    
+    ## ncvreg object type
+    writeLines("\n *** MCP *** \n")
+    mcp.param    <- reorder.labels.ncvreg(mcp.model, var.labels)
     
     
     # Return params
@@ -112,11 +165,12 @@ all.params <- function(current.data = NULL) {
 
 
 
-# ----- Simulating Scenarios -----
+# ----- Simulating Scenario Function -----
 
 # generic function to simulate a given scenario s
+
 sim.scenario <- function(s = NULL, conf.sd = NULL) {
-    N             <- 1000   # repetitions for this scenario
+    N             <- 1      # repetitions for this scenario
     M             <- 5      # number of VS techniques under investigation 
     p             <- 6      # number of variables in data (includes id, excludes intercept and outcome y)
     n             <- 10000  # synthetic data-set size (100,00)
@@ -147,7 +201,7 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
         
         
         # Fit models, determine parameters and biases of each model
-        current.params <- all.params(current.data)
+        current.params <- all.params(current.data, var.labels)
         current.biases <- all.biases(current.params, param.true)
         
         # Record coefficient results
@@ -166,7 +220,10 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
 }
 
 
+# ----- Entry Point -----
+
 set.seed(2023) # reproducibility
+S                 <- 4 # number of scenarios
 sim               <- NULL
 bias.results      <- NULL
 coef.results      <- NULL
@@ -176,7 +233,7 @@ c2.sd             <- 2.5
 
 
 # fixed conf sd gap
-for (s in 1:4) {
+for (s in 1:S) {
     message(paste("Scenario ", s, "/", 4))
     sim <- sim.scenario(s = s, conf.sd = c(c1.sd, c2.sd))
     bias.results <- sim[[1]]
@@ -190,6 +247,7 @@ for (s in 1:4) {
     
     save( list = paste("coef.results.s", s, sep = ""),
           file = paste("../data/coef_results_s", s , ".rda", sep = "") )
+    
 }
 
 
@@ -198,7 +256,7 @@ for (s in 1:4) {
 
 # conf sd gap variable
 #for (gap in conf.sd.gaps) {
-#  for (s in 1:4) {
+#  for (s in 1:S) {
 #    results <- sim.scenario(s = s, conf.sd = c(c1.sd - gap, c2.sd + gap))
 #    
 #    assign(paste("results.s", s, "_conf_gap_", gap, sep = ""), results)
