@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          19/06/2023
-# Most Recent Edit: 26/06/2023
+# Most Recent Edit: 03/10/2023
 # ****************************************
 
 
@@ -16,25 +16,22 @@
 rm(list = ls())
 
 suppressPackageStartupMessages({
-  library(broom)
   library(data.table)
   library(dplyr)
+  library(ggcorrplot)
   library(ggdag)
   library(ggplot2)
   library(glmnet)
-  library(gridExtra)
-  library(knitr)
-  library(modelr)
   library(ncvreg)
-  library(OpenMx)
   library(scales)
-  library(sgee)
   library(stringr)
   library(tidyverse)
-  library(VARSELECTEXPOSURE)
 })
 
-setwd("R")
+if ( !is.element( "RStudio", commandArgs() ) ) {
+  setwd("../R") # only needed for bash version, not running in RStudio
+}
+
 source("generate_data.R")
 source("plot_rescale.R")
 
@@ -139,3 +136,5 @@ message("\n\nScenario 3")
 lr.coef.summary.s3 %>% knitr::kable()
 message("\n\nScenario 4")
 lr.coef.summary.s4 %>% knitr::kable()
+
+

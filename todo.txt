@@ -1,7 +1,3 @@
-Immediate:
- - Finish re-checking glmnet param extraction
- - Polish ncvreg param extraction
-
 
 Long Term:
  - Bias SEs from absolute bias

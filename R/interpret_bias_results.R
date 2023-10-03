@@ -2,11 +2,12 @@
 # Variable Selection Simulation Study
 # 
 # Interpret Simulation Results
+# This file generates all relevant summary tables
 # 
 # Emma Tarmey
 #
 # Started:          14/04/2023
-# Most Recent Edit: 26/06/2023
+# Most Recent Edit: 03/10/2023
 # ****************************************
 
 
@@ -16,25 +17,22 @@
 rm(list = ls())
 
 suppressPackageStartupMessages({
-  library(broom)
   library(data.table)
   library(dplyr)
+  library(ggcorrplot)
   library(ggdag)
   library(ggplot2)
   library(glmnet)
-  library(gridExtra)
-  library(knitr)
-  library(modelr)
   library(ncvreg)
-  library(OpenMx)
   library(scales)
-  library(sgee)
   library(stringr)
   library(tidyverse)
-  library(VARSELECTEXPOSURE)
 })
 
-setwd("R")
+if ( !is.element( "RStudio", commandArgs() ) ) {
+  setwd("../R") # only needed for bash version, not running in RStudio
+}
+
 source("generate_data.R")
 source("plot_rescale.R")
 
@@ -68,7 +66,6 @@ coef.results.s2[1, , ] %>% knitr::kable()
 coef.results.s3[1, , ] %>% knitr::kable()
 coef.results.s4[1, , ] %>% knitr::kable()
 
-
 # take mean of errors across trials to find biases
 s1.bias.means <- bias.results.s1 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
 s2.bias.means <- bias.results.s2 %>% apply(., c(2, 3), mean) %>% reshape2::melt()
@@ -97,7 +94,6 @@ s3.bias.means %>% knitr::kable()
 
 message(paste(c("\n\nScenario = ", 4, ", N = ", dim(bias.results.s4)[1]), sep = ""))
 s4.bias.means %>% knitr::kable()
-
 
 
 # ----- Generate Plots -----

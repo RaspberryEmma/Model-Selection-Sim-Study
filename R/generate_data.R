@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          09/04/2023
-# Most Recent Edit: 29/06/2023
+# Most Recent Edit: 03/10/2023
 # ****************************************
 
 
@@ -15,23 +15,16 @@
 rm(list = ls())
 
 suppressPackageStartupMessages({
-  library(broom)
   library(data.table)
   library(dplyr)
   library(ggcorrplot)
   library(ggdag)
   library(ggplot2)
   library(glmnet)
-  library(gridExtra)
-  library(knitr)
-  library(modelr)
   library(ncvreg)
-  library(OpenMx)
   library(scales)
-  library(sgee)
   library(stringr)
   library(tidyverse)
-  library(VARSELECTEXPOSURE)
 })
 
 

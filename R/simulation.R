@@ -2,13 +2,11 @@
 # Variable Selection Simulation Study
 # 
 # Perform Variable Selection and Build Models
-# NOTE: Only 1 iteration!  Only 1 scenario!
-# TODO: fix glmnet object coef value extraction
 # 
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 26/09/2023
+# Most Recent Edit: 03/10/2023
 # ****************************************
 
 
@@ -18,27 +16,20 @@
 rm(list = ls())
 
 suppressPackageStartupMessages({
-  library(broom)
   library(data.table)
   library(dplyr)
   library(ggcorrplot)
   library(ggdag)
   library(ggplot2)
   library(glmnet)
-  library(gridExtra)
-  library(knitr)
-  library(modelr)
   library(ncvreg)
-  library(OpenMx)
   library(scales)
-  library(sgee)
   library(stringr)
   library(tidyverse)
-  library(VARSELECTEXPOSURE)
 })
 
 if ( !is.element( "RStudio", commandArgs() ) ) {
-  setwd("R") # only needed for bash version, not running in RStudio
+  setwd("../R") # only needed for bash version, not running in RStudio
 }
 
 source("generate_data.R")
@@ -70,17 +61,21 @@ all.biases <- function(current.params = NULL, param.true = NULL) {
   scad.bias   <- param.bias(scad.param,   param.true)
   mcp.bias    <- param.bias(mcp.param,    param.true)
   
-  
   # Return biases
-  return( array( data = c(linear.bias, lasso.bias, ridge.bias, scad.bias, mcp.bias),
-                 dim  = c(5, length(param.true)) ) )
+  return( matrix( data  = c(linear.bias, lasso.bias, ridge.bias, scad.bias, mcp.bias),
+                  nrow  = 5,
+                  ncol  = length(linear.bias),
+                  byrow = TRUE ) )
 }
 
 reorder.labels <- function(params = NULL, labels = NULL) {
   reordered.params <- rep(0, length(labels))
   match.index      <- 0
+  match.value      <- 0
   
-  for (label in labels) {
+  for (i in c(1:length(labels))) {
+    label <- labels[i]
+    
     print(label)
     print(names(params))
     print(str_detect(names(params), label))
@@ -89,23 +84,35 @@ reorder.labels <- function(params = NULL, labels = NULL) {
     # find label in params vector names
     match.index <- match(TRUE, str_detect(names(params), label))
     
+    # extract corresponding value
+    match.value <- params[match.index]
+    
     # assign param in appropriate position
-    reordered.params[match.index] <- params[match.index]
+    reordered.params[i] <- match.value
   }
-  
-  print(reordered.params)
-  writeLines("\n")
-  
+
   return (reordered.params)
 }
 
-reorder.labels.ncvreg <- function(model.object = NULL, labels = NULL) {
+reorder.labels.silent <- function(params = NULL, labels = NULL) {
   reordered.params <- rep(0, length(labels))
   match.index      <- 0
+  match.value      <- 0
   
-  print(summary(model.object, lambda=0.08))
+  for (i in c(1:length(labels))) {
+    label <- labels[i]
+    
+    # find label in params vector names
+    match.index <- match(TRUE, str_detect(names(params), label))
+    
+    # extract corresponding value
+    match.value <- params[match.index]
+    
+    # assign param in appropriate position
+    reordered.params[i] <- match.value
+  }
   
-  return (NULL)
+  return (reordered.params)
 }
 
 all.params <- function(current.data = NULL, var.labels = NULL) {
@@ -131,36 +138,44 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
     
     # Extract fitted model parameters
     
+    ## print labels
+    print(var.labels)
+    
     ## lm object type
     writeLines("\n *** LINEAR *** \n")
     linear.param <- linear.model$coefficients[2:7]
-    linear.param <- reorder.labels(linear.param, var.labels)
+    linear.param <- reorder.labels.silent(linear.param, var.labels)
+    print(linear.param)
     
     ## glmnet object type
     writeLines("\n *** LASSO *** \n")
-    print((lasso.model$beta) %>% rowMeans())
-    print(coef(lasso.model))
-    stop()
-    lasso.param  <- (lasso.model$beta) %>% rowMeans()
-    lasso.param  <- reorder.labels(lasso.param, var.labels)
+    lasso.param <- coef(lasso.model, s = 0.1)[,1]
+    lasso.param <- reorder.labels.silent(lasso.param, var.labels)
+    print(lasso.param)
     
     ## glmnet object type
     writeLines("\n *** RIDGE *** \n")
-    ridge.param  <- (ridge.model$beta) %>% rowMeans()
-    ridge.param  <- reorder.labels(ridge.param, var.labels)
+    ridge.param <- coef(ridge.model, s = 0.1)[,1]
+    ridge.param <- reorder.labels.silent(ridge.param, var.labels)
+    print(ridge.param)
     
     ## ncvreg object type
     writeLines("\n *** SCAD *** \n")
-    scad.param   <- reorder.labels.ncvreg(scad.model, var.labels)
+    scad.param <- coef(scad.model, lambda = 0.08)
+    scad.param <- reorder.labels.silent(scad.param, var.labels)
+    print(scad.param)
     
     ## ncvreg object type
     writeLines("\n *** MCP *** \n")
-    mcp.param    <- reorder.labels.ncvreg(mcp.model, var.labels)
-    
+    mcp.param <- coef(scad.model, lambda = 0.08)
+    mcp.param <- reorder.labels.silent(mcp.param, var.labels)
+    print(mcp.param)
     
     # Return params
-    return( array( data = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param),
-                   dim  = c(5, length(linear.param)) ) )
+    return( matrix( data  = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param),
+                    nrow  = 5,
+                    ncol  = length(linear.param),
+                    byrow = TRUE ) )
 }
 
 
@@ -169,16 +184,17 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
 
 # generic function to simulate a given scenario s
 
-sim.scenario <- function(s = NULL, conf.sd = NULL) {
-    N             <- 1      # repetitions for this scenario
-    M             <- 5      # number of VS techniques under investigation 
-    p             <- 6      # number of variables in data (includes id, excludes intercept and outcome y)
-    n             <- 10000  # synthetic data-set size (100,00)
+sim.scenario <- function(s       = NULL,
+                         conf.sd = NULL,
+                         N       = NULL,
+                         M       = NULL,
+                         p       = NULL,
+                         n       = NULL,
+                         method.labels = NULL,
+                         coef.labels   = NULL,
+                         var.labels    = NULL) {
+  
     current.data  <- NULL
-    
-    method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-    coef.labels   <- c("true", "linear", "lasso", "ridge", "scad", "mcp")
-    var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
     iter.labels   <- paste("i = ", c(1:N))
     
     # 3 dimensional matrix of coefficients generated
@@ -192,6 +208,8 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
                           dimnames = list(iter.labels, method.labels, var.labels) )
     
     for (i in 1:N) {
+        writeLines("\n")
+        message(paste("Scenario ",  s, "/", S))
         message(paste("Iteration ", i, "/", N))
       
         # Generate synthetic data
@@ -203,6 +221,11 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
         # Fit models, determine parameters and biases of each model
         current.params <- all.params(current.data, var.labels)
         current.biases <- all.biases(current.params, param.true)
+        
+        writeLines("\nParams:")
+        current.params %>% print()
+        writeLines("\nBiases:")
+        current.biases %>% print()
         
         # Record coefficient results
         coef.results[i, 1,       ] <- param.true
@@ -223,19 +246,45 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
 # ----- Entry Point -----
 
 set.seed(2023) # reproducibility
-S                 <- 4 # number of scenarios
+
+# simulation parameters
+S             <- 4      # number of scenarios
+N             <- 1000   # repetitions for this scenario
+M             <- 5      # number of VS techniques under investigation 
+p             <- 6      # number of variables in data (includes id, excludes intercept and outcome y)
+n             <- 10000  # synthetic data-set size (100,00)
+conf.sd.gaps  <- c(0, 1, 2)
+c1.sd         <- 2.5
+c2.sd         <- 2.5
+
+# labels for interpretability
+method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
+coef.labels   <- c("true", "linear", "lasso", "ridge", "scad", "mcp")
+var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
+
+# holder objects
 sim               <- NULL
 bias.results      <- NULL
 coef.results      <- NULL
-conf.sd.gaps      <- c(0, 1, 2)
-c1.sd             <- 2.5
-c2.sd             <- 2.5
+
 
 
 # fixed conf sd gap
 for (s in 1:S) {
     message(paste("Scenario ", s, "/", 4))
-    sim <- sim.scenario(s = s, conf.sd = c(c1.sd, c2.sd))
+    
+    # run simulation N times for a given scenario, fixing all parameters
+    sim <- sim.scenario(s       = s,
+                        conf.sd = c(c1.sd, c2.sd),
+                        N       = N,
+                        M       = M,
+                        p       = p,
+                        n       = n,
+                        method.labels = method.labels,
+                        coef.labels   = coef.labels,
+                        var.labels    = var.labels)
+    
+    # extract estimands of interest
     bias.results <- sim[[1]]
     coef.results <- sim[[2]]
     
