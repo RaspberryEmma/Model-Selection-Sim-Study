@@ -116,13 +116,6 @@ reorder.labels.silent <- function(params = NULL, labels = NULL) {
 }
 
 all.params <- function(current.data = NULL, var.labels = NULL) {
-    
-    # Partition test and training sets with index vector
-    #sample      <- sample(c(TRUE, FALSE), nrow(current.data), replace = TRUE, prob = c(0.7, 0.3))
-    #train.data  <- current.data
-    #test.data   <- current.data[!sample, ]
-    
-    
     # Separate input matrix (X) from output (y) with column selection
     X.train <- current.data %>% subset( select = -c(y) )
     y.train <- current.data$y
@@ -138,38 +131,25 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
     
     # Extract fitted model parameters
     
-    ## print labels
-    print(var.labels)
-    
     ## lm object type
-    writeLines("\n *** LINEAR *** \n")
     linear.param <- linear.model$coefficients[2:7]
     linear.param <- reorder.labels.silent(linear.param, var.labels)
-    print(linear.param)
     
     ## glmnet object type
-    writeLines("\n *** LASSO *** \n")
     lasso.param <- coef(lasso.model, s = 0.1)[,1]
     lasso.param <- reorder.labels.silent(lasso.param, var.labels)
-    print(lasso.param)
     
     ## glmnet object type
-    writeLines("\n *** RIDGE *** \n")
     ridge.param <- coef(ridge.model, s = 0.1)[,1]
     ridge.param <- reorder.labels.silent(ridge.param, var.labels)
-    print(ridge.param)
     
     ## ncvreg object type
-    writeLines("\n *** SCAD *** \n")
     scad.param <- coef(scad.model, lambda = 0.08)
     scad.param <- reorder.labels.silent(scad.param, var.labels)
-    print(scad.param)
     
     ## ncvreg object type
-    writeLines("\n *** MCP *** \n")
     mcp.param <- coef(scad.model, lambda = 0.08)
     mcp.param <- reorder.labels.silent(mcp.param, var.labels)
-    print(mcp.param)
     
     # Return params
     return( matrix( data  = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param),
@@ -184,7 +164,8 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
 
 # generic function to simulate a given scenario s
 
-sim.scenario <- function(s       = NULL,
+sim.scenario <- function(S       = NULL,
+                         s       = NULL,
                          conf.sd = NULL,
                          N       = NULL,
                          M       = NULL,
@@ -192,7 +173,8 @@ sim.scenario <- function(s       = NULL,
                          n       = NULL,
                          method.labels = NULL,
                          coef.labels   = NULL,
-                         var.labels    = NULL) {
+                         var.labels    = NULL,
+                         messages      = NULL) {
   
     current.data  <- NULL
     iter.labels   <- paste("i = ", c(1:N))
@@ -208,9 +190,11 @@ sim.scenario <- function(s       = NULL,
                           dimnames = list(iter.labels, method.labels, var.labels) )
     
     for (i in 1:N) {
-        writeLines("\n")
-        message(paste("Scenario ",  s, "/", S))
-        message(paste("Iteration ", i, "/", N))
+        if (messages) {
+          writeLines("\n")
+          message(paste("Scenario ",  s, "/", S))
+          message(paste("Iteration ", i, "/", N))
+        }
       
         # Generate synthetic data
         current.data <- do.call( paste("generate.data.", s, sep = ""),
@@ -222,10 +206,12 @@ sim.scenario <- function(s       = NULL,
         current.params <- all.params(current.data, var.labels)
         current.biases <- all.biases(current.params, param.true)
         
-        writeLines("\nParams:")
-        current.params %>% print()
-        writeLines("\nBiases:")
-        current.biases %>% print()
+        if (messages) {
+          writeLines("\nParams:")
+          current.params %>% print()
+          writeLines("\nBiases:")
+          current.biases %>% print()
+        }
         
         # Record coefficient results
         coef.results[i, 1,       ] <- param.true
@@ -235,9 +221,11 @@ sim.scenario <- function(s       = NULL,
         bias.results[i, , ] <- current.biases
     }
     
-    # check results
-    bias.results[1, , ] %>% knitr::kable()
-    coef.results[1, , ] %>% knitr::kable()
+    if (messages) {
+      # check results
+      bias.results[1, , ] %>% knitr::kable()
+      coef.results[1, , ] %>% knitr::kable()
+    }
     
     return ( list(bias.results, coef.results) )
 }
@@ -245,75 +233,72 @@ sim.scenario <- function(s       = NULL,
 
 # ----- Entry Point -----
 
-set.seed(2023) # reproducibility
+run.simulation <- function(S = NULL,
+                           N = NULL,
+                           M = NULL,
+                           p = NULL,
+                           n = NULL,
+                           messages = NULL) {
 
-# simulation parameters
-S             <- 4      # number of scenarios
-N             <- 1000   # repetitions for this scenario
-M             <- 5      # number of VS techniques under investigation 
-p             <- 6      # number of variables in data (includes id, excludes intercept and outcome y)
-n             <- 10000  # synthetic data-set size (100,00)
-conf.sd.gaps  <- c(0, 1, 2)
-c1.sd         <- 2.5
-c2.sd         <- 2.5
+  # reproducibility
+  set.seed(2023)
+  
+  # simulation parameters
+  #S <- S  # number of scenarios
+  #N <- N  # repetitions for this scenario
+  #M <- M  # number of VS techniques under investigation 
+  #p <- p  # number of variables in data (includes id, excludes intercept and outcome y)
+  #n <- n  # synthetic data-set size (100,00)
+  
+  # control standard deviations of confounder variables
+  conf.sd.gaps  <- c(0, 1, 2)
+  c1.sd         <- 2.5
+  c2.sd         <- 2.5
+  
+  # labels for interpretability
+  method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
+  coef.labels   <- c("true", "linear", "lasso", "ridge", "scad", "mcp")
+  var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
+  
+  # holder objects
+  sim               <- NULL
+  bias.results      <- NULL
+  coef.results      <- NULL
+  
+  # fixed conf sd gap
+  for (s in 1:S) {
+      message(paste("Scenario ", s, "/", 4))
+      
+      # run simulation N times for a given scenario, fixing all parameters
+      sim <- sim.scenario(S       = S,
+                          s       = s,
+                          conf.sd = c(c1.sd, c2.sd),
+                          N       = N,
+                          M       = M,
+                          p       = p,
+                          n       = n,
+                          method.labels = method.labels,
+                          coef.labels   = coef.labels,
+                          var.labels    = var.labels,
+                          messages      = messages)
+      
+      # extract estimands of interest
+      bias.results <- sim[[1]]
+      coef.results <- sim[[2]]
+      
+      assign(paste("bias.results.s", s, sep = ""), bias.results)
+      assign(paste("coef.results.s", s, sep = ""), coef.results)
+      
+      save( list = paste("bias.results.s", s, sep = ""),
+            file = paste("../data/bias_results_s", s , ".rda", sep = "") )
+      
+      save( list = paste("coef.results.s", s, sep = ""),
+            file = paste("../data/coef_results_s", s , ".rda", sep = "") )
+      
+  }
 
-# labels for interpretability
-method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-coef.labels   <- c("true", "linear", "lasso", "ridge", "scad", "mcp")
-var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
-
-# holder objects
-sim               <- NULL
-bias.results      <- NULL
-coef.results      <- NULL
-
-
-
-# fixed conf sd gap
-for (s in 1:S) {
-    message(paste("Scenario ", s, "/", 4))
-    
-    # run simulation N times for a given scenario, fixing all parameters
-    sim <- sim.scenario(s       = s,
-                        conf.sd = c(c1.sd, c2.sd),
-                        N       = N,
-                        M       = M,
-                        p       = p,
-                        n       = n,
-                        method.labels = method.labels,
-                        coef.labels   = coef.labels,
-                        var.labels    = var.labels)
-    
-    # extract estimands of interest
-    bias.results <- sim[[1]]
-    coef.results <- sim[[2]]
-    
-    assign(paste("bias.results.s", s, sep = ""), bias.results)
-    assign(paste("coef.results.s", s, sep = ""), coef.results)
-    
-    save( list = paste("bias.results.s", s, sep = ""),
-          file = paste("../data/bias_results_s", s , ".rda", sep = "") )
-    
-    save( list = paste("coef.results.s", s, sep = ""),
-          file = paste("../data/coef_results_s", s , ".rda", sep = "") )
-    
 }
 
-
-
-
-
-# conf sd gap variable
-#for (gap in conf.sd.gaps) {
-#  for (s in 1:S) {
-#    results <- sim.scenario(s = s, conf.sd = c(c1.sd - gap, c2.sd + gap))
-#    
-#    assign(paste("results.s", s, "_conf_gap_", gap, sep = ""), results)
-#    
-#    save( list = paste("results.s", s, "_conf_gap_", gap, sep = ""),
-#          file = paste("../data/results_s", s ,"_conf_gap_", gap, ".rda", sep = "") )
-#  }
-#}
 
 
 

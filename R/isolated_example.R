@@ -139,31 +139,33 @@ sim.scenario <- function(s = NULL, conf.sd = NULL) {
 }
 
 
-dataset <- generate.data.1()
-
-
-set.seed(2023) # reproducibility
-sim               <- NULL
-bias.results      <- NULL
-coef.results      <- NULL
-conf.sd.gaps      <- c(0, 1, 2)
-c1.sd             <- 2.5
-c2.sd             <- 2.5
-
-
-s <- 1
-sim <- sim.scenario(s = s, conf.sd = c(c1.sd, c2.sd))
-bias.results <- sim[[1]]
-coef.results <- sim[[2]]
-
-assign(paste("bias.results.s", s, sep = ""), bias.results)
-assign(paste("coef.results.s", s, sep = ""), coef.results)
-
-message("Biases:")
-bias.results.s1 %>% knitr::kable()
-
-message("\n\n\n\nCoefficient Values:")
-coef.results.s1 %>% knitr::kable()
+run.isolated.example <- function() {
+  dataset <- generate.data.1()
+  
+  
+  set.seed(2023) # reproducibility
+  sim               <- NULL
+  bias.results      <- NULL
+  coef.results      <- NULL
+  conf.sd.gaps      <- c(0, 1, 2)
+  c1.sd             <- 2.5
+  c2.sd             <- 2.5
+  
+  
+  s <- 1
+  sim <- sim.scenario(s = s, conf.sd = c(c1.sd, c2.sd))
+  bias.results <- sim[[1]]
+  coef.results <- sim[[2]]
+  
+  assign(paste("bias.results.s", s, sep = ""), bias.results)
+  assign(paste("coef.results.s", s, sep = ""), coef.results)
+  
+  message("Biases:")
+  bias.results.s1 %>% knitr::kable()
+  
+  message("\n\n\n\nCoefficient Values:")
+  coef.results.s1 %>% knitr::kable()
+}
 
 
 
