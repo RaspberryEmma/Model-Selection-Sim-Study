@@ -5,6 +5,6 @@ Simulation study of various variable selection techniques.  Intended to examine 
 
 The folders "data" and "plots" contain pre-computed results.
 
-The simulation can be run either in Jupyer Notebook (using the Jupyter R Kernel) with "Run_Sim.ipynb" or in RStudio with "Run_Sim.R".
+The simulation can be run from command line using the bash scripts "RUN_SIM.sh" and "RUN_RESULTS_ONLY.sh".
 
-The quest for knowledge continues, new developments ongoing!
+Still in development!

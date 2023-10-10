@@ -57,8 +57,8 @@ get.results.data <- function() {
 
 # ----- Linear Regression Error Investigation -----
 
-coef.tables <- function(coef.results.s1, coef.results.s2, coef.results.s3, coef.results.s4) {
-  message("\n\nLinear Regression Parameter Estimates for each Scenario")
+coef.tables <- function(method = "linear", coef.results.s1, coef.results.s2, coef.results.s3, coef.results.s4) {
+  message( paste("\n\n", method, " Parameter Estimates for each Scenario") )
   
   # convert results matrices to standardised data-frame
   coef.results.s1 <- ( coef.results.s1 %>% reshape2::melt() )
@@ -78,59 +78,59 @@ coef.tables <- function(coef.results.s1, coef.results.s2, coef.results.s3, coef.
   coef.results.s3 <- (coef.results.s3 %>% select("Technique", "Variable", "Value"))
   coef.results.s4 <- (coef.results.s4 %>% select("Technique", "Variable", "Value"))
   
-  # restrict to only linear regression models
-  lr.coef.results.s1 <- (coef.results.s1 %>% filter(Technique == "linear"))
-  lr.coef.results.s2 <- (coef.results.s2 %>% filter(Technique == "linear"))
-  lr.coef.results.s3 <- (coef.results.s3 %>% filter(Technique == "linear"))
-  lr.coef.results.s4 <- (coef.results.s4 %>% filter(Technique == "linear"))
+  # restrict to only models of a given method
+  method.coef.results.s1 <- (coef.results.s1 %>% filter(Technique == method))
+  method.coef.results.s2 <- (coef.results.s2 %>% filter(Technique == method))
+  method.coef.results.s3 <- (coef.results.s3 %>% filter(Technique == method))
+  method.coef.results.s4 <- (coef.results.s4 %>% filter(Technique == method))
   
   # find the mean value of every coefficient, per variable and per scenario
-  lr.coef.means.s1 <- aggregate(Value ~ Variable, data = lr.coef.results.s1, mean)
-  lr.coef.means.s2 <- aggregate(Value ~ Variable, data = lr.coef.results.s2, mean)
-  lr.coef.means.s3 <- aggregate(Value ~ Variable, data = lr.coef.results.s3, mean)
-  lr.coef.means.s4 <- aggregate(Value ~ Variable, data = lr.coef.results.s4, mean)
+  method.coef.means.s1 <- aggregate(Value ~ Variable, data = method.coef.results.s1, mean)
+  method.coef.means.s2 <- aggregate(Value ~ Variable, data = method.coef.results.s2, mean)
+  method.coef.means.s3 <- aggregate(Value ~ Variable, data = method.coef.results.s3, mean)
+  method.coef.means.s4 <- aggregate(Value ~ Variable, data = method.coef.results.s4, mean)
   
-  colnames(lr.coef.means.s1) <- c("Variable", "Mean")
-  colnames(lr.coef.means.s2) <- c("Variable", "Mean")
-  colnames(lr.coef.means.s3) <- c("Variable", "Mean")
-  colnames(lr.coef.means.s4) <- c("Variable", "Mean")
+  colnames(method.coef.means.s1) <- c("Variable", "Mean")
+  colnames(method.coef.means.s2) <- c("Variable", "Mean")
+  colnames(method.coef.means.s3) <- c("Variable", "Mean")
+  colnames(method.coef.means.s4) <- c("Variable", "Mean")
   
   # find the standard deviation of every coefficient, per variable and per scenario
-  lr.coef.sds.s1 <- aggregate(Value ~ Variable, data = lr.coef.results.s1, sd)
-  lr.coef.sds.s2 <- aggregate(Value ~ Variable, data = lr.coef.results.s2, sd)
-  lr.coef.sds.s3 <- aggregate(Value ~ Variable, data = lr.coef.results.s3, sd)
-  lr.coef.sds.s4 <- aggregate(Value ~ Variable, data = lr.coef.results.s4, sd)
+  method.coef.sds.s1 <- aggregate(Value ~ Variable, data = method.coef.results.s1, sd)
+  method.coef.sds.s2 <- aggregate(Value ~ Variable, data = method.coef.results.s2, sd)
+  method.coef.sds.s3 <- aggregate(Value ~ Variable, data = method.coef.results.s3, sd)
+  method.coef.sds.s4 <- aggregate(Value ~ Variable, data = method.coef.results.s4, sd)
   
-  colnames(lr.coef.sds.s1) <- c("Variable", "SD")
-  colnames(lr.coef.sds.s2) <- c("Variable", "SD")
-  colnames(lr.coef.sds.s3) <- c("Variable", "SD")
-  colnames(lr.coef.sds.s4) <- c("Variable", "SD")
+  colnames(method.coef.sds.s1) <- c("Variable", "SD")
+  colnames(method.coef.sds.s2) <- c("Variable", "SD")
+  colnames(method.coef.sds.s3) <- c("Variable", "SD")
+  colnames(method.coef.sds.s4) <- c("Variable", "SD")
   
   # aggregate the above to form our summary
-  lr.coef.summary.s1 <- merge(lr.coef.means.s1, lr.coef.sds.s1, by = "Variable")
-  lr.coef.summary.s2 <- merge(lr.coef.means.s2, lr.coef.sds.s2, by = "Variable")
-  lr.coef.summary.s3 <- merge(lr.coef.means.s3, lr.coef.sds.s3, by = "Variable")
-  lr.coef.summary.s4 <- merge(lr.coef.means.s4, lr.coef.sds.s4, by = "Variable")
+  method.coef.summary.s1 <- merge(method.coef.means.s1, method.coef.sds.s1, by = "Variable")
+  method.coef.summary.s2 <- merge(method.coef.means.s2, method.coef.sds.s2, by = "Variable")
+  method.coef.summary.s3 <- merge(method.coef.means.s3, method.coef.sds.s3, by = "Variable")
+  method.coef.summary.s4 <- merge(method.coef.means.s4, method.coef.sds.s4, by = "Variable")
   
   # re-order rows to match canonical ordering
   order <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
-  lr.coef.summary.s1 <- ( lr.coef.summary.s1 %>% slice(match(order, Variable)) )
-  lr.coef.summary.s2 <- ( lr.coef.summary.s2 %>% slice(match(order, Variable)) )
-  lr.coef.summary.s3 <- ( lr.coef.summary.s3 %>% slice(match(order, Variable)) )
-  lr.coef.summary.s4 <- ( lr.coef.summary.s4 %>% slice(match(order, Variable)) )
+  method.coef.summary.s1 <- ( method.coef.summary.s1 %>% slice(match(order, Variable)) )
+  method.coef.summary.s2 <- ( method.coef.summary.s2 %>% slice(match(order, Variable)) )
+  method.coef.summary.s3 <- ( method.coef.summary.s3 %>% slice(match(order, Variable)) )
+  method.coef.summary.s4 <- ( method.coef.summary.s4 %>% slice(match(order, Variable)) )
   
   # contextualize by pulling true parameter values from data generation
-  lr.coef.summary.s1$True <- get.true.param.1()
-  lr.coef.summary.s2$True <- get.true.param.2()
-  lr.coef.summary.s3$True <- get.true.param.3()
-  lr.coef.summary.s4$True <- get.true.param.4()
+  method.coef.summary.s1$True <- get.true.param.1()
+  method.coef.summary.s2$True <- get.true.param.2()
+  method.coef.summary.s3$True <- get.true.param.3()
+  method.coef.summary.s4$True <- get.true.param.4()
   
   # re-order columns
-  lr.coef.summary.s1 <- (lr.coef.summary.s1 %>% select("Variable", "True", "Mean", "SD"))
-  lr.coef.summary.s2 <- (lr.coef.summary.s2 %>% select("Variable", "True", "Mean", "SD"))
-  lr.coef.summary.s3 <- (lr.coef.summary.s3 %>% select("Variable", "True", "Mean", "SD"))
-  lr.coef.summary.s4 <- (lr.coef.summary.s4 %>% select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s1 <- (method.coef.summary.s1 %>% select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s2 <- (method.coef.summary.s2 %>% select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s3 <- (method.coef.summary.s3 %>% select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s4 <- (method.coef.summary.s4 %>% select("Variable", "True", "Mean", "SD"))
   
-  return( list(lr.coef.summary.s1, lr.coef.summary.s2,  lr.coef.summary.s3, lr.coef.summary.s4 ) )
+  return( list(method.coef.summary.s1, method.coef.summary.s2,  method.coef.summary.s3, method.coef.summary.s4 ) )
 }
 

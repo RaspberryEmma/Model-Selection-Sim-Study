@@ -7480,7 +7480,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-r"><pre><span></span><span class="c1"># ****************************************</span>
@@ -7491,7 +7491,7 @@ a.anchor-link {
 <span class="c1"># Emma Tarmey</span>
 <span class="c1">#</span>
 <span class="c1"># Started:          03/10/2023</span>
-<span class="c1"># Most Recent Edit: 03/10/2023</span>
+<span class="c1"># Most Recent Edit: 10/10/2023</span>
 <span class="c1"># ****************************************</span>
 </pre></div>
 </div>
@@ -7586,7 +7586,7 @@ Scenario  4 / 4
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-r"><pre><span></span><span class="nf">source</span><span class="p">(</span><span class="s">"interpret_bias_results.R"</span><span class="p">)</span>
@@ -9906,7 +9906,7 @@ AABJRU5ErkJggg==" width="420"/>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-r"><pre><span></span><span class="nf">source</span><span class="p">(</span><span class="s">"interpret_coef_results.R"</span><span class="p">)</span>
@@ -9923,18 +9923,70 @@ AABJRU5ErkJggg==" width="420"/>
 <span class="n">coef.results.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">all.results</span><span class="p">[[</span><span class="m">7</span><span class="p">]]</span>
 <span class="n">coef.results.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">all.results</span><span class="p">[[</span><span class="m">8</span><span class="p">]]</span>
 
-<span class="c1"># TODO: generalise this across all technniques!</span>
-<span class="n">all.coef</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef.tables</span><span class="p">(</span><span class="n">coef.results.s1</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s2</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s3</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s4</span><span class="p">)</span>
 
-<span class="n">lr.coef.summary.s1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">all.coef</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
-<span class="n">lr.coef.summary.s2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">all.coef</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
-<span class="n">lr.coef.summary.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">all.coef</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
-<span class="n">lr.coef.summary.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">all.coef</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+<span class="n">lr.coef</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef.tables</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"linear"</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s1</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s2</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s3</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s4</span><span class="p">)</span>
+
+<span class="n">lr.coef.summary.s1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lr.coef</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+<span class="n">lr.coef.summary.s2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lr.coef</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+<span class="n">lr.coef.summary.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lr.coef</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+<span class="n">lr.coef.summary.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lr.coef</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
 
 <span class="n">lr.coef.summary.s1</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
 <span class="n">lr.coef.summary.s2</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
 <span class="n">lr.coef.summary.s3</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
 <span class="n">lr.coef.summary.s4</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+
+
+<span class="n">lasso.coef</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef.tables</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"lasso"</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s1</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s2</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s3</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s4</span><span class="p">)</span>
+
+<span class="n">lasso.coef.summary.s1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lasso.coef</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+<span class="n">lasso.coef.summary.s2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lasso.coef</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+<span class="n">lasso.coef.summary.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lasso.coef</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+<span class="n">lasso.coef.summary.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lasso.coef</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+
+<span class="n">lasso.coef.summary.s1</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">lasso.coef.summary.s2</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">lasso.coef.summary.s3</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">lasso.coef.summary.s4</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+
+
+<span class="n">ridge.coef</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef.tables</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"ridge"</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s1</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s2</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s3</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s4</span><span class="p">)</span>
+
+<span class="n">ridge.coef.summary.s1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ridge.coef</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+<span class="n">ridge.coef.summary.s2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ridge.coef</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+<span class="n">ridge.coef.summary.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ridge.coef</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+<span class="n">ridge.coef.summary.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ridge.coef</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+
+<span class="n">ridge.coef.summary.s1</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">ridge.coef.summary.s2</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">ridge.coef.summary.s3</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">ridge.coef.summary.s4</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+
+
+<span class="n">scad.coef</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef.tables</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"scad"</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s1</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s2</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s3</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s4</span><span class="p">)</span>
+
+<span class="n">scad.coef.summary.s1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">scad.coef</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+<span class="n">scad.coef.summary.s2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">scad.coef</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+<span class="n">scad.coef.summary.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">scad.coef</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+<span class="n">scad.coef.summary.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">scad.coef</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+
+<span class="n">scad.coef.summary.s1</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">scad.coef.summary.s2</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">scad.coef.summary.s3</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">scad.coef.summary.s4</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+
+
+<span class="n">mcp.coef</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coef.tables</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"mcp"</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s1</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s2</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s3</span><span class="p">,</span><span class="w"> </span><span class="n">coef.results.s4</span><span class="p">)</span>
+
+<span class="n">mcp.coef.summary.s1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mcp.coef</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+<span class="n">mcp.coef.summary.s2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mcp.coef</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+<span class="n">mcp.coef.summary.s3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mcp.coef</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+<span class="n">mcp.coef.summary.s4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mcp.coef</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+
+<span class="n">mcp.coef.summary.s1</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">mcp.coef.summary.s2</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">mcp.coef.summary.s3</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
+<span class="n">mcp.coef.summary.s4</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">knitr</span><span class="o">::</span><span class="nf">kable</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -9949,7 +10001,7 @@ AABJRU5ErkJggg==" width="420"/>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 
-Linear Regression Parameter Estimates for each Scenario
+ linear  Parameter Estimates for each Scenario
 
 </pre>
 </div>
@@ -10012,6 +10064,286 @@ Linear Regression Parameter Estimates for each Scenario
 |x.1      |    1|  1.0012182| 0.0345646|
 |x.2      |    1|  0.9997414| 0.0099956|
 |x.3      |    1|  0.9998706| 0.0029080|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+
+ lasso  Parameter Estimates for each Scenario
+
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0000000| 0.0000000|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9685636| 0.0040449|
+|x.2      |    1| 1.0303658| 0.0057289|
+|x.3      |    1| 0.9677001| 0.0075259|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0534689| 0.0178708|
+|c.2      |    0| 0.0000009| 0.0000174|
+|x.1      |    1| 0.9800106| 0.0040051|
+|x.2      |    1| 0.8977702| 0.0302913|
+|x.3      |    1| 1.0021412| 0.0059855|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0172602| 0.0036009|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9253001| 0.0096856|
+|x.2      |    1| 0.9084731| 0.0097729|
+|x.3      |    1| 0.9975387| 0.0021166|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0091904| 0.0052597|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9773898| 0.0334488|
+|x.2      |    1| 0.8859248| 0.0099161|
+|x.3      |    1| 1.0015854| 0.0021478|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+
+ ridge  Parameter Estimates for each Scenario
+
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000941| 0.0000086|
+|c.1      |    0| 0.2590366| 0.0100189|
+|c.2      |    0| 0.1306120| 0.0099282|
+|x.1      |    1| 0.5745419| 0.0031405|
+|x.2      |    1| 1.0896503| 0.0074368|
+|x.3      |    1| 0.7556225| 0.0077849|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000858| 0.0000086|
+|c.1      |    0| 0.3440651| 0.0093606|
+|c.2      |    0| 0.1197756| 0.0106119|
+|x.1      |    1| 0.7190411| 0.0034303|
+|x.2      |    1| 0.6990926| 0.0158523|
+|x.3      |    1| 0.8824947| 0.0061420|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000655| 0.0000031|
+|c.1      |    0| 0.2162824| 0.0036935|
+|c.2      |    0| 0.0898231| 0.0035476|
+|x.1      |    1| 0.7281200| 0.0089199|
+|x.2      |    1| 0.7134506| 0.0093327|
+|x.3      |    1| 0.8302233| 0.0022635|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000607| 0.0000029|
+|c.1      |    0| 0.1449353| 0.0036031|
+|c.2      |    0| 0.1036923| 0.0036629|
+|x.1      |    1| 1.3871795| 0.0235988|
+|x.2      |    1| 0.7140956| 0.0093318|
+|x.3      |    1| 0.8200340| 0.0023095|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+
+ scad  Parameter Estimates for each Scenario
+
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|       Mean|        SD|
+|:--------|----:|----------:|---------:|
+|id       |    0|  0.0000000| 0.0000008|
+|c.1      |    0| -0.0000151| 0.0006567|
+|c.2      |    0|  0.0000060| 0.0004741|
+|x.1      |    1|  1.0001685| 0.0040009|
+|x.2      |    1|  1.0001929| 0.0121614|
+|x.3      |    1|  1.0002173| 0.0085505|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000004|
+|c.1      |    0| 0.0000000| 0.0000011|
+|c.2      |    0| 0.0000091| 0.0005234|
+|x.1      |    1| 0.9999618| 0.0040021|
+|x.2      |    1| 0.9999252| 0.0186695|
+|x.3      |    1| 0.9996096| 0.0082867|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0000000| 0.0000000|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9997532| 0.0091046|
+|x.2      |    1| 1.0000803| 0.0095684|
+|x.3      |    1| 0.9998999| 0.0029246|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0000000| 0.0000000|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9999795| 0.0259779|
+|x.2      |    1| 0.9997076| 0.0096593|
+|x.3      |    1| 0.9998664| 0.0029090|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+
+ mcp  Parameter Estimates for each Scenario
+
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|       Mean|        SD|
+|:--------|----:|----------:|---------:|
+|id       |    0|  0.0000000| 0.0000008|
+|c.1      |    0| -0.0000151| 0.0006567|
+|c.2      |    0|  0.0000060| 0.0004741|
+|x.1      |    1|  1.0001685| 0.0040009|
+|x.2      |    1|  1.0001929| 0.0121614|
+|x.3      |    1|  1.0002173| 0.0085505|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000004|
+|c.1      |    0| 0.0000000| 0.0000011|
+|c.2      |    0| 0.0000091| 0.0005234|
+|x.1      |    1| 0.9999618| 0.0040021|
+|x.2      |    1| 0.9999252| 0.0186695|
+|x.3      |    1| 0.9996096| 0.0082867|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0000000| 0.0000000|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9997532| 0.0091046|
+|x.2      |    1| 1.0000803| 0.0095684|
+|x.3      |    1| 0.9998999| 0.0029246|</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+
+|Variable | True|      Mean|        SD|
+|:--------|----:|---------:|---------:|
+|id       |    0| 0.0000000| 0.0000000|
+|c.1      |    0| 0.0000000| 0.0000000|
+|c.2      |    0| 0.0000000| 0.0000000|
+|x.1      |    1| 0.9999795| 0.0259779|
+|x.2      |    1| 0.9997076| 0.0096593|
+|x.3      |    1| 0.9998664| 0.0029090|</pre>
 </div>
 </div>
 </div>
