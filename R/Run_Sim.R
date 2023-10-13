@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          09/10/2023
-# Most Recent Edit: 09/10/2023
+# Most Recent Edit: 13/10/2023
 # ****************************************
 
 # sanity check file location
@@ -17,9 +17,14 @@ source("../R/simulation.R")
 #file.show("simulation.R")
 
 # run simulation
+# S = number of scenarios
+# N = repetitions for this scenario
+# M = number of VS techniques under investigation 
+# p = number of variables in data (includes id, excludes intercept and outcome y)
+# n = synthetic data-set size
 run.simulation(S = 4,
                N = 1000,
-               M = 5,
+               M = 6,
                p = 6,
                n = 10000,
                messages = FALSE)
@@ -51,6 +56,8 @@ s2.bias.means %>% knitr::kable()
 s3.bias.means %>% knitr::kable()
 s4.bias.means %>% knitr::kable()
 
+bias.plots(s1.bias.means, s2.bias.means, s3.bias.means, s4.bias.means)
+
 
 library("png")
 
@@ -70,7 +77,6 @@ plot.new()
 pp <- readPNG("../plots/bias_s4.png")
 rasterImage(pp, 0.00, 0.00, 1.00, 1.00)
 
-
 source("interpret_coef_results.R")
 
 all.results <- get.results.data()
@@ -85,8 +91,7 @@ coef.results.s2 <- all.results[[6]]
 coef.results.s3 <- all.results[[7]]
 coef.results.s4 <- all.results[[8]]
 
-# TODO: generalise this across all technniques!
-all.coef <- coef.tables(coef.results.s1, coef.results.s2, coef.results.s3, coef.results.s4)
+all.coef <- coef.tables(method = "linear", coef.results.s1, coef.results.s2, coef.results.s3, coef.results.s4)
 
 lr.coef.summary.s1 <- all.coef[[1]]
 lr.coef.summary.s2 <- all.coef[[2]]
@@ -97,8 +102,4 @@ lr.coef.summary.s1 %>% knitr::kable()
 lr.coef.summary.s2 %>% knitr::kable()
 lr.coef.summary.s3 %>% knitr::kable()
 lr.coef.summary.s4 %>% knitr::kable()
-
-
-
-bias.plots(s1.bias.means, s2.bias.means, s3.bias.means, s4.bias.means)
 

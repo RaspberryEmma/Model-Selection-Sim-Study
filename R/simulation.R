@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 03/10/2023
+# Most Recent Edit: 13/10/2023
 # ****************************************
 
 
@@ -22,6 +22,7 @@ suppressPackageStartupMessages({
   library(ggdag)
   library(ggplot2)
   library(glmnet)
+  library(MASS)
   library(ncvreg)
   library(scales)
   library(stringr)
@@ -53,6 +54,7 @@ all.biases <- function(current.params = NULL, param.true = NULL) {
   ridge.param  <- current.params[3, ]
   scad.param   <- current.params[4, ]
   mcp.param    <- current.params[5, ]
+  step.param   <- current.params[6, ]
   
   # Parameter Bias measurement
   linear.bias <- param.bias(linear.param, param.true)
@@ -60,10 +62,11 @@ all.biases <- function(current.params = NULL, param.true = NULL) {
   ridge.bias  <- param.bias(ridge.param,  param.true)
   scad.bias   <- param.bias(scad.param,   param.true)
   mcp.bias    <- param.bias(mcp.param,    param.true)
+  step.bias   <- param.bias(step.param,   param.true)
   
   # Return biases
-  return( matrix( data  = c(linear.bias, lasso.bias, ridge.bias, scad.bias, mcp.bias),
-                  nrow  = 5,
+  return( matrix( data  = c(linear.bias, lasso.bias, ridge.bias, scad.bias, mcp.bias, step.bias),
+                  nrow  = 6,
                   ncol  = length(linear.bias),
                   byrow = TRUE ) )
 }
@@ -127,6 +130,7 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
     ridge.model  <- glmnet::glmnet(X.train, y.train, alpha = 0, family.train = "gaussian", intercept = F)
     scad.model   <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("SCAD"))
     mcp.model    <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("MCP"))
+    step.model   <- MASS::stepAIC(linear.model, direction = "both", trace = FALSE)
     
     
     # Extract fitted model parameters
@@ -151,9 +155,14 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
     mcp.param <- coef(scad.model, lambda = 0.08)
     mcp.param <- reorder.labels.silent(mcp.param, var.labels)
     
+    ## MASS object type
+    step.param <- coef(step.model)
+    step.param <- reorder.labels.silent(step.param, var.labels)
+    
+    
     # Return params
-    return( matrix( data  = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param),
-                    nrow  = 5,
+    return( matrix( data  = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param, step.param),
+                    nrow  = 6,
                     ncol  = length(linear.param),
                     byrow = TRUE ) )
 }
@@ -248,7 +257,7 @@ run.simulation <- function(S = NULL,
   #N <- N  # repetitions for this scenario
   #M <- M  # number of VS techniques under investigation 
   #p <- p  # number of variables in data (includes id, excludes intercept and outcome y)
-  #n <- n  # synthetic data-set size (100,00)
+  #n <- n  # synthetic data-set size (10,000)
   
   # control standard deviations of confounder variables
   conf.sd.gaps  <- c(0, 1, 2)
@@ -256,8 +265,8 @@ run.simulation <- function(S = NULL,
   c2.sd         <- 2.5
   
   # labels for interpretability
-  method.labels <- c("linear", "lasso", "ridge", "scad", "mcp")
-  coef.labels   <- c("true", "linear", "lasso", "ridge", "scad", "mcp")
+  method.labels <- c("linear", "lasso", "ridge", "scad", "mcp", "stepwise")
+  coef.labels   <- c("true", "linear", "lasso", "ridge", "scad", "mcp", "stepwise")
   var.labels    <- c("id", "c.1", "c.2", "x.1", "x.2", "x.3")
   
   # holder objects

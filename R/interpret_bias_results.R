@@ -84,19 +84,22 @@ bias.tables <- function(bias.results.s1, bias.results.s2, bias.results.s3, bias.
   colnames(s3.bias.means) <- c("Technique", "Variable", "Bias")
   colnames(s4.bias.means) <- c("Technique", "Variable", "Bias")
   
+  # print results
   message("\n\nMean Bias of each VS Technique for each Parameter estimate:")
-  
   message(paste(c("\n\nScenario = ", 1, ", N = ", dim(bias.results.s1)[1] ), sep = ""))
   s1.bias.means %>% knitr::kable()
-  
   message(paste(c("\n\nScenario = ", 2, ", N = ", dim(bias.results.s2)[1]), sep = ""))
   s2.bias.means %>% knitr::kable()
-  
   message(paste(c("\n\nScenario = ", 3, ", N = ", dim(bias.results.s3)[1]), sep = ""))
   s3.bias.means %>% knitr::kable()
-  
   message(paste(c("\n\nScenario = ", 4, ", N = ", dim(bias.results.s4)[1]), sep = ""))
-  s4.bias.means %>% knitr::kable()#
+  s4.bias.means %>% knitr::kable()
+  
+  # save results
+  s1.bias.means %>% write.csv(., "../data/bias_summary_s1.csv")
+  s2.bias.means %>% write.csv(., "../data/bias_summary_s2.csv")
+  s3.bias.means %>% write.csv(., "../data/bias_summary_s3.csv")
+  s4.bias.means %>% write.csv(., "../data/bias_summary_s4.csv")
   
   return (list(s1.bias.means, s2.bias.means, s3.bias.means, s4.bias.means))
 }
@@ -105,22 +108,27 @@ bias.tables <- function(bias.results.s1, bias.results.s2, bias.results.s3, bias.
 # ----- Generate Plots -----
 
 bias.plots <- function(s1.bias.means, s2.bias.means, s3.bias.means, s4.bias.means) {
-  t1 <- paste0( "Bias HeatMap: \nScenario = ", 1, ", N = ", dim(bias.results.s1)[1] )
+  
+  dim(s1.bias.means)[1] %>% print()
+  dim(s1.bias.means)[2] %>% print()
+  dim(s1.bias.means)[3] %>% print()
+  
+  t1 <- paste0( "Bias HeatMap: \nScenario = ", 1 )
   p1 <-  ggplot(s1.bias.means , aes(Technique, Variable, fill= Bias)) + 
       geom_tile() +
       ggtitle(t1)
   
-  t2 <- paste0( "Bias HeatMap: \nScenario = ", 2, ", N = ", dim(bias.results.s2)[1] )
+  t2 <- paste0( "Bias HeatMap: \nScenario = ", 2 )
   p2 <-  ggplot(s2.bias.means , aes(Technique, Variable, fill= Bias)) + 
       geom_tile() +
       ggtitle(t2)
   
-  t3 <- paste0( "Bias HeatMap: \nScenario = ", 3, ", N = ", dim(bias.results.s3)[1] )
+  t3 <- paste0( "Bias HeatMap: \nScenario = ", 3 )
   p3 <-  ggplot(s3.bias.means , aes(Technique, Variable, fill= Bias)) + 
       geom_tile() +
       ggtitle(t3)
   
-  t4 <- paste0( "Bias HeatMap: \nScenario = ", 4, ", N = ", dim(bias.results.s4)[1] )
+  t4 <- paste0( "Bias HeatMap: \nScenario = ", 4 )
   p4<-  ggplot(s4.bias.means , aes(Technique, Variable, fill= Bias)) + 
       geom_tile() +
       ggtitle(t4)
@@ -136,20 +144,21 @@ bias.plots <- function(s1.bias.means, s2.bias.means, s3.bias.means, s4.bias.mean
   
   # ----- Save Plots to Disk -----
   
+  print(getwd())
   png("../plots/bias_s1.png")
-  p1
+  print(p1)
   dev.off()
   
   png("../plots/bias_s2.png")
-  p2
+  print(p2)
   dev.off()
   
   png("../plots/bias_s3.png")
-  p3
+  print(p3)
   dev.off()
   
   png("../plots/bias_s4.png")
-  p4
+  print(p4)
   dev.off()
 }
 

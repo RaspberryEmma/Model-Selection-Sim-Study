@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          19/06/2023
-# Most Recent Edit: 03/10/2023
+# Most Recent Edit: 13/10/2023
 # ****************************************
 
 
@@ -73,10 +73,10 @@ coef.tables <- function(method = "linear", coef.results.s1, coef.results.s2, coe
   colnames(coef.results.s4) <- c("Iteration", "Technique", "Variable", "Value")
   
   # ignore iteration column
-  coef.results.s1 <- (coef.results.s1 %>% select("Technique", "Variable", "Value"))
-  coef.results.s2 <- (coef.results.s2 %>% select("Technique", "Variable", "Value"))
-  coef.results.s3 <- (coef.results.s3 %>% select("Technique", "Variable", "Value"))
-  coef.results.s4 <- (coef.results.s4 %>% select("Technique", "Variable", "Value"))
+  coef.results.s1 <- (coef.results.s1 %>% dplyr::select("Technique", "Variable", "Value"))
+  coef.results.s2 <- (coef.results.s2 %>% dplyr::select("Technique", "Variable", "Value"))
+  coef.results.s3 <- (coef.results.s3 %>% dplyr::select("Technique", "Variable", "Value"))
+  coef.results.s4 <- (coef.results.s4 %>% dplyr::select("Technique", "Variable", "Value"))
   
   # restrict to only models of a given method
   method.coef.results.s1 <- (coef.results.s1 %>% filter(Technique == method))
@@ -126,10 +126,16 @@ coef.tables <- function(method = "linear", coef.results.s1, coef.results.s2, coe
   method.coef.summary.s4$True <- get.true.param.4()
   
   # re-order columns
-  method.coef.summary.s1 <- (method.coef.summary.s1 %>% select("Variable", "True", "Mean", "SD"))
-  method.coef.summary.s2 <- (method.coef.summary.s2 %>% select("Variable", "True", "Mean", "SD"))
-  method.coef.summary.s3 <- (method.coef.summary.s3 %>% select("Variable", "True", "Mean", "SD"))
-  method.coef.summary.s4 <- (method.coef.summary.s4 %>% select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s1 <- (method.coef.summary.s1 %>% dplyr::select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s2 <- (method.coef.summary.s2 %>% dplyr::select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s3 <- (method.coef.summary.s3 %>% dplyr::select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s4 <- (method.coef.summary.s4 %>% dplyr::select("Variable", "True", "Mean", "SD"))
+  
+  # save results
+  method.coef.summary.s1 %>% write.csv(., paste("../data/coef_summary_", method, "_s1.csv"))
+  method.coef.summary.s2 %>% write.csv(., paste("../data/coef_summary_", method, "_s2.csv"))
+  method.coef.summary.s3 %>% write.csv(., paste("../data/coef_summary_", method, "_s3.csv"))
+  method.coef.summary.s4 %>% write.csv(., paste("../data/coef_summary_", method, "_s4.csv"))
   
   return( list(method.coef.summary.s1, method.coef.summary.s2,  method.coef.summary.s3, method.coef.summary.s4 ) )
 }
