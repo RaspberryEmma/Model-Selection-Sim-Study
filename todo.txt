@@ -1,17 +1,7 @@
 
-Long Term:
- - Bias SEs from absolute bias
- - Value of bias within 1.96 SEs of zero
- - Significance test
- - Check SD(beta) across N ~= mean( SD(beta) ) within N
- - Coverage
- - Null sim
- - Heatmaps bias -> standardised bias (indent zeroes)
- - Standardise SDs
+Themes:
+ - missingness handling (multiple imputation, ...)
+ - measurement error
+ - confounder selection strategies
+ - Shiny App version (?)
 
-
-Longer term:
- - finish conf gap code in simulation.R
- - implement conf gap interpretation in interpret_results.R
- 
- 

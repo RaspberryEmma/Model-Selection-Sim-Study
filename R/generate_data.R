@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          09/04/2023
-# Most Recent Edit: 03/10/2023
+# Most Recent Edit: 25/10/2023
 # ****************************************
 
 
@@ -21,6 +21,7 @@ suppressPackageStartupMessages({
   library(ggdag)
   library(ggplot2)
   library(glmnet)
+  library(missMethods)
   library(ncvreg)
   library(scales)
   library(stringr)
@@ -51,7 +52,7 @@ get.true.param.1 <- function() {
   return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.1 <- function(sample.size = 1000, conf.sd     = c(2.5, 2.5)) {
+generate.data.1 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5), mech.missing = "none", prop.missing = 0.0) {
   # sample size
   n <- sample.size
   
@@ -77,6 +78,25 @@ generate.data.1 <- function(sample.size = 1000, conf.sd     = c(2.5, 2.5)) {
   
   # re-order columns
   synthetic.data %>% setcolorder( c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y") )
+  
+  # missingness mechanism
+  if (mech.missing == "none") {
+    # do nothing
+  }
+  else if (mech.missing == "MCAR") {
+    synthetic.data <- missMethods::delete_MCAR(synthetic.data, prop.missing)
+  }
+  else if (mech.missing == "MAR") {
+    synthetic.data <- missMethods::delete_MAR_censoring(ds = synthetic.data,
+                                                        p  = prop.missing,
+                                                        cols_mis  = c("x.1", "x.2", "x.3"),
+                                                        cols_ctrl = c("c.1", "c.2", "y"))
+  }
+  else if (mech.missing == "MNAR") {
+    synthetic.data <- missMethods::delete_MNAR_censoring(ds = synthetic.data,
+                                                         p  = prop.missing,
+                                                         cols_mis = c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y"))
+  }
   
   # return result
   return (synthetic.data)
@@ -106,7 +126,7 @@ get.true.param.2 <- function() {
   return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.2 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
+generate.data.2 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5), mech.missing = "none", prop.missing = 0.0) {
   # sample size
   n <- sample.size
   
@@ -134,6 +154,25 @@ generate.data.2 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
   
   # re-order columns
   synthetic.data %>% setcolorder( c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y") )
+  
+  # missingness mechanism
+  if (mech.missing == "none") {
+    # do nothing
+  }
+  else if (mech.missing == "MCAR") {
+    synthetic.data <- missMethods::delete_MCAR(synthetic.data, prop.missing)
+  }
+  else if (mech.missing == "MAR") {
+    synthetic.data <- missMethods::delete_MAR_censoring(ds = synthetic.data,
+                                                        p  = prop.missing,
+                                                        cols_mis  = c("x.1", "x.2", "x.3"),
+                                                        cols_ctrl = c("c.1", "c.2", "y"))
+  }
+  else if (mech.missing == "MNAR") {
+    synthetic.data <- missMethods::delete_MNAR_censoring(ds = synthetic.data,
+                                                         p  = prop.missing,
+                                                         cols_mis = c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y"))
+  }
   
   # return result
   return (synthetic.data)
@@ -165,7 +204,7 @@ get.true.param.3 <- function() {
   return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.3 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
+generate.data.3 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5), mech.missing = "none", prop.missing = 0.0) {
   # sample size
   n <- sample.size
   
@@ -193,6 +232,25 @@ generate.data.3 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
   
   # re-order columns
   synthetic.data %>% setcolorder( c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y") )
+  
+  # missingness mechanism
+  if (mech.missing == "none") {
+    # do nothing
+  }
+  else if (mech.missing == "MCAR") {
+    synthetic.data <- missMethods::delete_MCAR(synthetic.data, prop.missing)
+  }
+  else if (mech.missing == "MAR") {
+    synthetic.data <- missMethods::delete_MAR_censoring(ds = synthetic.data,
+                                                        p  = prop.missing,
+                                                        cols_mis  = c("x.1", "x.2", "x.3"),
+                                                        cols_ctrl = c("c.1", "c.2", "y"))
+  }
+  else if (mech.missing == "MNAR") {
+    synthetic.data <- missMethods::delete_MNAR_censoring(ds = synthetic.data,
+                                                         p  = prop.missing,
+                                                         cols_mis = c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y"))
+  }
   
   # return result
   return (synthetic.data)
@@ -223,7 +281,7 @@ get.true.param.4 <- function() {
   return ( c(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) )
 }
 
-generate.data.4 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
+generate.data.4 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5), mech.missing = "none", prop.missing = 0.0) {
   # sample size
   n <- sample.size
   
@@ -251,6 +309,25 @@ generate.data.4 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5)) {
   
   # re-order columns
   synthetic.data %>% setcolorder( c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y") )
+  
+  # missingness mechanism
+  if (mech.missing == "none") {
+    # do nothing
+  }
+  else if (mech.missing == "MCAR") {
+    synthetic.data <- missMethods::delete_MCAR(synthetic.data, prop.missing)
+  }
+  else if (mech.missing == "MAR") {
+    synthetic.data <- missMethods::delete_MAR_censoring(ds = synthetic.data,
+                                                        p  = prop.missing,
+                                                        cols_mis  = c("x.1", "x.2", "x.3"),
+                                                        cols_ctrl = c("c.1", "c.2", "y"))
+  }
+  else if (mech.missing == "MNAR") {
+    synthetic.data <- missMethods::delete_MNAR_censoring(ds = synthetic.data,
+                                                         p  = prop.missing,
+                                                         cols_mis = c("id", "c.1", "c.2", "x.1", "x.2", "x.3", "y"))
+  }
   
   # return result
   return (synthetic.data)

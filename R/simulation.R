@@ -118,53 +118,59 @@ reorder.labels.silent <- function(params = NULL, labels = NULL) {
   return (reordered.params)
 }
 
+# model fitting occurs here
 all.params <- function(current.data = NULL, var.labels = NULL) {
-    # Separate input matrix (X) from output (y) with column selection
-    X.train <- current.data %>% subset( select = -c(y) )
-    y.train <- current.data$y
-    
-    
-    # Model fitting
-    linear.model <- lm(y.train ~ as.matrix(X.train))
-    lasso.model  <- glmnet::glmnet(X.train, y.train, alpha = 1, family.train = "gaussian", intercept = F)
-    ridge.model  <- glmnet::glmnet(X.train, y.train, alpha = 0, family.train = "gaussian", intercept = F)
-    scad.model   <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("SCAD"))
-    mcp.model    <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("MCP"))
-    step.model   <- MASS::stepAIC(linear.model, direction = "both", trace = FALSE)
-    
-    
-    # Extract fitted model parameters
-    
-    ## lm object type
-    linear.param <- linear.model$coefficients[2:7]
-    linear.param <- reorder.labels.silent(linear.param, var.labels)
-    
-    ## glmnet object type
-    lasso.param <- coef(lasso.model, s = 0.1)[,1]
-    lasso.param <- reorder.labels.silent(lasso.param, var.labels)
-    
-    ## glmnet object type
-    ridge.param <- coef(ridge.model, s = 0.1)[,1]
-    ridge.param <- reorder.labels.silent(ridge.param, var.labels)
-    
-    ## ncvreg object type
-    scad.param <- coef(scad.model, lambda = 0.08)
-    scad.param <- reorder.labels.silent(scad.param, var.labels)
-    
-    ## ncvreg object type
-    mcp.param <- coef(scad.model, lambda = 0.08)
-    mcp.param <- reorder.labels.silent(mcp.param, var.labels)
-    
-    ## MASS object type
-    step.param <- coef(step.model)
-    step.param <- reorder.labels.silent(step.param, var.labels)
-    
-    
-    # Return params
-    return( matrix( data  = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param, step.param),
-                    nrow  = 6,
-                    ncol  = length(linear.param),
-                    byrow = TRUE ) )
+  # handle missingness
+  # TODO: expand here to do something more interesting
+  # e.g multiple imputation
+  current.data <- na.omit(current.data)
+  
+  # Separate input matrix (X) from output (y) with column selection
+  X.train <- current.data %>% subset( select = -c(y) )
+  y.train <- current.data$y
+  
+  
+  # Model fitting
+  linear.model <- lm(y.train ~ as.matrix(X.train))
+  lasso.model  <- glmnet::glmnet(X.train, y.train, alpha = 1, family.train = "gaussian", intercept = F)
+  ridge.model  <- glmnet::glmnet(X.train, y.train, alpha = 0, family.train = "gaussian", intercept = F)
+  scad.model   <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("SCAD"))
+  mcp.model    <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("MCP"))
+  step.model   <- MASS::stepAIC(linear.model, direction = "both", trace = FALSE)
+  
+  
+  # Extract fitted model parameters
+  
+  ## lm object type
+  linear.param <- linear.model$coefficients[2:7]
+  linear.param <- reorder.labels.silent(linear.param, var.labels)
+  
+  ## glmnet object type
+  lasso.param <- coef(lasso.model, s = 0.1)[,1]
+  lasso.param <- reorder.labels.silent(lasso.param, var.labels)
+  
+  ## glmnet object type
+  ridge.param <- coef(ridge.model, s = 0.1)[,1]
+  ridge.param <- reorder.labels.silent(ridge.param, var.labels)
+  
+  ## ncvreg object type
+  scad.param <- coef(scad.model, lambda = 0.08)
+  scad.param <- reorder.labels.silent(scad.param, var.labels)
+  
+  ## ncvreg object type
+  mcp.param <- coef(scad.model, lambda = 0.08)
+  mcp.param <- reorder.labels.silent(mcp.param, var.labels)
+  
+  ## MASS object type
+  step.param <- coef(step.model)
+  step.param <- reorder.labels.silent(step.param, var.labels)
+  
+  
+  # Return params
+  return( matrix( data  = c(linear.param, lasso.param, ridge.param, scad.param, mcp.param, step.param),
+                  nrow  = 6,
+                  ncol  = length(linear.param),
+                  byrow = TRUE ) )
 }
 
 
@@ -183,6 +189,8 @@ sim.scenario <- function(S       = NULL,
                          method.labels = NULL,
                          coef.labels   = NULL,
                          var.labels    = NULL,
+                         mech.missing  = NULL,
+                         prop.missing  = NULL,
                          messages      = NULL) {
   
     current.data  <- NULL
@@ -207,7 +215,7 @@ sim.scenario <- function(S       = NULL,
       
         # Generate synthetic data
         current.data <- do.call( paste("generate.data.", s, sep = ""),
-                                 list( sample.size = n, conf.sd = conf.sd ) )
+                                 list( sample.size = n, conf.sd = conf.sd, mech.missing = mech.missing, prop.missing = prop.missing ) )
         param.true   <- do.call( paste("get.true.param.", s, sep = ""), list() )
         
         
@@ -247,6 +255,8 @@ run.simulation <- function(S = NULL,
                            M = NULL,
                            p = NULL,
                            n = NULL,
+                           mech.missing = "none",
+                           prop.missing = 0.0,
                            messages = NULL) {
 
   # reproducibility
@@ -289,6 +299,8 @@ run.simulation <- function(S = NULL,
                           method.labels = method.labels,
                           coef.labels   = coef.labels,
                           var.labels    = var.labels,
+                          mech.missing  = mech.missing,
+                          prop.missing  = prop.missing,
                           messages      = messages)
       
       # extract estimands of interest

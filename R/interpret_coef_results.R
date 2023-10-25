@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          19/06/2023
-# Most Recent Edit: 13/10/2023
+# Most Recent Edit: 25/10/2023
 # ****************************************
 
 
@@ -38,10 +38,10 @@ source("plot_rescale.R")
 # ----- Read Results Data from CSV -----
 
 get.results.data <- function() {
-  load("../data/bias_results_s1.rda")
-  load("../data/bias_results_s2.rda")
-  load("../data/bias_results_s3.rda")
-  load("../data/bias_results_s4.rda")
+  bias.results.s1 <- read.csv("../data/bias_summary_s1.csv")
+  bias.results.s2 <- read.csv("../data/bias_summary_s2.csv")
+  bias.results.s3 <- read.csv("../data/bias_summary_s3.csv")
+  bias.results.s4 <- read.csv("../data/bias_summary_s4.csv")
   
   load("../data/coef_results_s1.rda")
   load("../data/coef_results_s2.rda")
@@ -79,6 +79,11 @@ coef.tables <- function(method = "linear", coef.results.s1, coef.results.s2, coe
   coef.results.s4 <- (coef.results.s4 %>% dplyr::select("Technique", "Variable", "Value"))
   
   # restrict to only models of a given method
+  method.bias.results.s1 <- (bias.results.s1 %>% filter(Technique == method))
+  method.bias.results.s2 <- (bias.results.s2 %>% filter(Technique == method))
+  method.bias.results.s3 <- (bias.results.s3 %>% filter(Technique == method))
+  method.bias.results.s4 <- (bias.results.s4 %>% filter(Technique == method))
+  
   method.coef.results.s1 <- (coef.results.s1 %>% filter(Technique == method))
   method.coef.results.s2 <- (coef.results.s2 %>% filter(Technique == method))
   method.coef.results.s3 <- (coef.results.s3 %>% filter(Technique == method))
@@ -125,11 +130,22 @@ coef.tables <- function(method = "linear", coef.results.s1, coef.results.s2, coe
   method.coef.summary.s3$True <- get.true.param.3()
   method.coef.summary.s4$True <- get.true.param.4()
   
+  # compare coef values to measured bias
+  method.coef.summary.s1$BiasMean <- method.bias.results.s1$BiasMean
+  method.coef.summary.s2$BiasMean <- method.bias.results.s2$BiasMean
+  method.coef.summary.s3$BiasMean <- method.bias.results.s3$BiasMean
+  method.coef.summary.s4$BiasMean <- method.bias.results.s4$BiasMean
+  
+  method.coef.summary.s1$BiasSD <- method.bias.results.s1$BiasSD
+  method.coef.summary.s2$BiasSD <- method.bias.results.s2$BiasSD
+  method.coef.summary.s3$BiasSD <- method.bias.results.s3$BiasSD
+  method.coef.summary.s4$BiasSD <- method.bias.results.s4$BiasSD
+  
   # re-order columns
-  method.coef.summary.s1 <- (method.coef.summary.s1 %>% dplyr::select("Variable", "True", "Mean", "SD"))
-  method.coef.summary.s2 <- (method.coef.summary.s2 %>% dplyr::select("Variable", "True", "Mean", "SD"))
-  method.coef.summary.s3 <- (method.coef.summary.s3 %>% dplyr::select("Variable", "True", "Mean", "SD"))
-  method.coef.summary.s4 <- (method.coef.summary.s4 %>% dplyr::select("Variable", "True", "Mean", "SD"))
+  method.coef.summary.s1 <- (method.coef.summary.s1 %>% dplyr::select("Variable", "True", "Mean", "SD", "BiasMean", "BiasSD"))
+  method.coef.summary.s2 <- (method.coef.summary.s2 %>% dplyr::select("Variable", "True", "Mean", "SD", "BiasMean", "BiasSD"))
+  method.coef.summary.s3 <- (method.coef.summary.s3 %>% dplyr::select("Variable", "True", "Mean", "SD", "BiasMean", "BiasSD"))
+  method.coef.summary.s4 <- (method.coef.summary.s4 %>% dplyr::select("Variable", "True", "Mean", "SD", "BiasMean", "BiasSD"))
   
   # save results
   method.coef.summary.s1 %>% write.csv(., paste("../data/coef_summary_", method, "_s1.csv"))
