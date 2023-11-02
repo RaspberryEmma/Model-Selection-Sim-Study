@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 13/10/2023
+# Most Recent Edit: 02/11/2023
 # ****************************************
 
 
@@ -25,6 +25,7 @@ suppressPackageStartupMessages({
   library(MASS)
   library(ncvreg)
   library(scales)
+  library(sjmisc)
   library(stringr)
   library(tidyverse)
 })
@@ -129,14 +130,27 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
   X.train <- current.data %>% subset( select = -c(y) )
   y.train <- current.data$y
   
+  # generate penalty.factor sequence using var.labels
+  # ensure exposures (variables marked with 'x') are always included
+  penalty.factor <- rep(1, length(var.labels))
+  for (i in 1:length(var.labels)) {
+    if ( sjmisc::str_contains(var.labels[i], "x") ) { penalty.factor[i] <- 0 }
+  }
+  print(var.labels)
+  print(penalty.factor)
   
   # Model fitting
   linear.model <- lm(y.train ~ as.matrix(X.train))
-  lasso.model  <- glmnet::glmnet(X.train, y.train, alpha = 1, family.train = "gaussian", intercept = F)
-  ridge.model  <- glmnet::glmnet(X.train, y.train, alpha = 0, family.train = "gaussian", intercept = F)
-  scad.model   <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("SCAD"))
-  mcp.model    <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("MCP"))
+  lasso.model  <- glmnet::glmnet(X.train, y.train, alpha = 1, family.train = "gaussian", intercept = F, penalty.factor = penalty.factor)
+  ridge.model  <- glmnet::glmnet(X.train, y.train, alpha = 0, family.train = "gaussian", intercept = F, penalty.factor = penalty.factor)
+  scad.model   <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("SCAD"), penalty.factor = penalty.factor)
+  mcp.model    <- ncvreg::ncvreg(X.train, y.train, family.train = c("gaussian"), penalty.train = c("MCP"),  penalty.factor = penalty.factor)
+  
+  # TODO - fix here!
   step.model   <- MASS::stepAIC(linear.model, direction = "both", trace = FALSE)
+  #step.model   <- MASS::stepAIC(linear.model, direction = "both", trace = FALSE,
+  #                              scope = list(lower = as.formula(y ~ x.1 + x.2 + x.3), upper = linear.model))
+  
   
   
   # Extract fitted model parameters
