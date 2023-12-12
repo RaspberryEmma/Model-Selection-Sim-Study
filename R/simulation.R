@@ -80,10 +80,10 @@ reorder.labels <- function(params = NULL, labels = NULL) {
   for (i in c(1:length(labels))) {
     label <- labels[i]
     
-    print(label)
-    print(names(params))
-    print(str_detect(names(params), label))
-    writeLines("\n")
+    #print(label)
+    #print(names(params))
+    #print(str_detect(names(params), label))
+    #writeLines("\n")
     
     # find label in params vector names
     match.index <- match(TRUE, str_detect(names(params), label))
@@ -136,8 +136,8 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
   for (i in 1:length(var.labels)) {
     if ( sjmisc::str_contains(var.labels[i], "x") ) { penalty.factor[i] <- 0 }
   }
-  print(var.labels)
-  print(penalty.factor)
+  #print(var.labels)
+  #print(penalty.factor)
   
   # Model fitting
   linear.model <- lm(y.train ~ as.matrix(X.train))
@@ -205,7 +205,7 @@ sim.scenario <- function(S       = NULL,
                          var.labels    = NULL,
                          mech.missing  = NULL,
                          prop.missing  = NULL,
-                         messages      = NULL) {
+                         messages      = FALSE) {
   
     current.data  <- NULL
     iter.labels   <- paste("i = ", c(1:N))
