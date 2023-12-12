@@ -334,4 +334,28 @@ generate.data.4 <- function(sample.size = 1000, conf.sd = c(2.5, 2.5), mech.miss
 }
 
 
+# TODO: fill these in!
+draw.DAG.confounder       <- function() { return (NULL) }
+get.true.param.confounder <- function() { return (NULL) }
+generate.data.confounder  <- function() { return (NULL) }
+
+
+draw.DAG.collider       <- function() { return (NULL) }
+get.true.param.collider <- function() { return (NULL) }
+generate.data.collider  <- function() { return (NULL) }
+
+
+draw.DAG.unmeasured       <- function() { return (NULL) }
+get.true.param.unmeasured <- function() { return (NULL) }
+generate.data.unmeasured  <- function() { return (NULL) }
+
+
+draw.DAG.instrument       <- function() { return (NULL) }
+get.true.param.instrument <- function() { return (NULL) }
+generate.data.instrument  <- function() { return (NULL) }
+
+
+draw.DAG.proxy       <- function() { return (NULL) }
+get.true.param.proxy <- function() { return (NULL) }
+generate.data.proxy  <- function() { return (NULL) }
 

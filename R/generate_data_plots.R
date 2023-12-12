@@ -6,7 +6,7 @@
 # Emma Tarmey
 #
 # Started:          11/04/2023
-# Most Recent Edit: 03/10/2023
+# Most Recent Edit: 12/12/2023
 # ****************************************
 
 
@@ -34,173 +34,47 @@ if ( !is.element( "RStudio", commandArgs() ) ) {
 source("generate_data.R")
 source("plot_rescale.R")
 
-# ----- Test Scenario 1 -----
 
-scenario.1.plots <- function() {
+# ----- Any given scenario -----
+
+scenario.plots <- function(s = NULL) {
   # open png file
-  png("../plots/synthetic_data_s1_DAG.png")
-  
-  p <- draw.DAG.1()
+  png(paste("../plots/synthetic_data_s", s, "_DAG.png", sep = ""))
+  assign("p", do.call(paste("draw.DAG.", s, sep = ""), list()))
   p
   
   # close png file
   dev.off()
   
   # data - scenario - trial
-  data.1.1 <- generate.data.1()
-  data.1.2 <- generate.data.1()
-  data.1.3 <- generate.data.1()
+  assign("data.s.1", do.call(paste("generate.data.", s, sep = ""), list()))
+  assign("data.s.2", do.call(paste("generate.data.", s, sep = ""), list()))
+  assign("data.s.3", do.call(paste("generate.data.", s, sep = ""), list()))
   
-  data.1.1 %>% head() %>% knitr::kable()
-  data.1.2 %>% head() %>% knitr::kable()
-  data.1.3 %>% head() %>% knitr::kable()
+  data.s.1 %>% head() %>% knitr::kable()
+  data.s.2 %>% head() %>% knitr::kable()
+  data.s.3 %>% head() %>% knitr::kable()
   
-  data.1.1 %>% cor()
-  data.1.2 %>% cor()
-  data.1.3 %>% cor()
-  
-  # Correlation plot
-  png("../plots/synthetic_data_s1_t1_corr.png")
-  p <- data.1.1 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 1 - Trial 1")
-  p
-  dev.off()
-  
-  png("../plots/synthetic_data_s1_t2_corr.png")
-  p <- data.1.2 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 1 - Trial 2")
-  p
-  dev.off()
-  
-  png("../plots/synthetic_data_s1_t3_corr.png")
-  p <- data.1.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 1 - Trial 3")
-  p
-  dev.off()
-}
-
-
-# ----- Test Scenario 2 -----
-
-scenario.2.plots <- function() {
-  # DAG plot
-  png("../plots/synthetic_data_s2_DAG.png")
-  p <- draw.DAG.2()
-  p
-  dev.off()
-  
-  # data - scenario - trial
-  data.2.1 <- generate.data.2()
-  data.2.2 <- generate.data.2()
-  data.2.3 <- generate.data.2()
-  
-  data.2.1 %>% head() %>% knitr::kable()
-  data.2.2 %>% head() %>% knitr::kable()
-  data.2.3 %>% head() %>% knitr::kable()
+  data.s.1 %>% cor()
+  data.s.2 %>% cor()
+  data.s.3 %>% cor()
   
   # Correlation plot
-  png("../plots/synthetic_data_s2_t1_corr.png")
-  p <- data.2.1 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 2 - Trial 1")
+  png( paste("../plots/synthetic_data_s", s, "_t1_corr.png", sep = "") )
+  p <- data.s.1 %>% cor() %>% ggcorrplot::ggcorrplot() +
+    ggtitle( paste("Synthetic Data Correlation Plot - Scenario ", s, " - Trial 1", sep = "") )
   p
   dev.off()
   
-  png("../plots/synthetic_data_s2_t2_corr.png")
-  p <- data.2.2 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 2 - Trial 2")
+  png( paste("../plots/synthetic_data_s", s, "_t2_corr.png", sep = "") )
+  p <- data.s.2 %>% cor() %>% ggcorrplot::ggcorrplot() +
+    ggtitle( paste("Synthetic Data Correlation Plot - Scenario ", s, " - Trial 2", sep = "") )
   p
   dev.off()
   
-  png("../plots/synthetic_data_s2_t3_corr.png")
-  p <- data.2.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 2 - Trial 3")
-  p
-  dev.off()
-}
-
-
-
-# ----- Test Scenario 3 -----
-
-scenario.3.plots <- function() {
-  # DAG plot
-  png("../plots/synthetic_data_s3_DAG.png")
-  p <- draw.DAG.3()
-  p
-  dev.off()
-  
-  # data - scenario - trial
-  data.3.1 <- generate.data.3()
-  data.3.2 <- generate.data.3()
-  data.3.3 <- generate.data.3()
-  
-  data.3.1 %>% head() %>% knitr::kable()
-  data.3.2 %>% head() %>% knitr::kable()
-  data.3.3 %>% head() %>% knitr::kable()
-  
-  data.3.1 %>% cor()
-  data.3.2 %>% cor()
-  data.3.3 %>% cor()
-  
-  # Correlation plot
-  png("../plots/synthetic_data_s3_t1_corr.png")
-  p <- data.3.1 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 3 - Trial 1")
-  p
-  dev.off()
-  
-  png("../plots/synthetic_data_s3_t2_corr.png")
-  p <- data.3.2 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 3 - Trial 2")
-  p
-  dev.off()
-  
-  png("../plots/synthetic_data_s3_t3_corr.png")
-  p <- data.3.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 3 - Trial 3")
-  p
-  dev.off()
-}
-
-
-# ----- Test Scenario 4 -----
-
-scenario.4.plots <- function() {
-  # DAG plot
-  png("../plots/synthetic_data_s4_DAG.png")
-  p <- draw.DAG.4()
-  p
-  dev.off()
-  
-  # data - scenario - trial
-  data.4.1 <- generate.data.4()
-  data.4.2 <- generate.data.4()
-  data.4.3 <- generate.data.4()
-  
-  data.4.1 %>% head() %>% knitr::kable()
-  data.4.2 %>% head() %>% knitr::kable()
-  data.4.3 %>% head() %>% knitr::kable()
-  
-  data.4.1 %>% cor()
-  data.4.2 %>% cor()
-  data.4.3 %>% cor()
-  
-  # Correlation plot
-  png("../plots/synthetic_data_s4_t1_corr.png")
-  p <- data.4.1 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 4 - Trial 1")
-  p
-  dev.off()
-  
-  png("../plots/synthetic_data_s4_t2_corr.png")
-  p <- data.4.2 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 4 - Trial 2")
-  p
-  dev.off()
-  
-  png("../plots/synthetic_data_s4_t3_corr.png")
-  p <- data.4.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
-    ggtitle("Synthetic Data Correlation Plot - Scenario 4 - Trial 3")
+  png( paste("../plots/synthetic_data_s", s, "_t3_corr.png", sep = "") )
+  p <- data.s.3 %>% cor() %>% ggcorrplot::ggcorrplot() +
+    ggtitle( paste("Synthetic Data Correlation Plot - Scenario ", s, " - Trial 3", sep = "") )
   p
   dev.off()
 }

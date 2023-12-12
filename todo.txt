@@ -1,4 +1,12 @@
 
+Specific tasks:
+ - Implement confounder scenario
+ - Implement collider scenario
+ - Implement instrument scenario
+ - Implement unmeasured scenario
+ - Implement proxy scenario
+
+
 Themes:
  - exposure marking
  - missingness handling (multiple imputation, ...)

@@ -168,11 +168,11 @@ all.params <- function(current.data = NULL, var.labels = NULL) {
   ridge.param <- reorder.labels.silent(ridge.param, var.labels)
   
   ## ncvreg object type
-  scad.param <- coef(scad.model, lambda = 0.08)
+  scad.param <- coef(scad.model, lambda = scad.model$lambda[50])
   scad.param <- reorder.labels.silent(scad.param, var.labels)
   
   ## ncvreg object type
-  mcp.param <- coef(scad.model, lambda = 0.08)
+  mcp.param <- coef(mcp.model, lambda = mcp.model$lambda[50])
   mcp.param <- reorder.labels.silent(mcp.param, var.labels)
   
   ## MASS object type
